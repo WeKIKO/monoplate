@@ -1,0 +1,6 @@
+{
+  "name": "health",
+  "kind": "domain",
+  "defaultEnabled": true,
+  "description": "API liveness and readiness state"
+}

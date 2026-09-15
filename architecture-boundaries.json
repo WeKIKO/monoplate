@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "domainRoot": "domains",
+  "clientRoots": ["apps/mobile", "apps/admin", "apps/landing"],
+  "serverOnlyPackages": ["database"],
+  "domainForbiddenPackages": ["hono", "drizzle-orm", "pino", "zod", "react", "react-native", "expo"]
+}

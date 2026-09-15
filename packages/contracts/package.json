@@ -1,0 +1,10 @@
+{
+  "name": "@monoplate/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./auth": "./src/auth.ts", "./error": "./src/error.ts", "./health": "./src/health.ts", "./http": "./src/http.ts", "./pagination": "./src/pagination.ts" },
+  "scripts": { "typecheck": "tsc", "test": "vitest run --passWithNoTests", "lint": "eslint src" },
+  "dependencies": { "zod": "catalog:" },
+  "devDependencies": { "@monoplate/typescript-config": "workspace:*", "typescript": "catalog:" }
+}

@@ -1,0 +1,12 @@
+.git
+.github
+.env*
+!.env.example
+**/node_modules
+**/dist
+**/.turbo
+**/.expo
+**/coverage
+.local-storage
+sbom.json
+*.log

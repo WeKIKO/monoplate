@@ -1,0 +1,9 @@
+---
+import { product } from "../config/product";
+interface Props { title?: string; description?: string; image?: string; }
+const { title = product.title, description = product.description, image = product.image } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image, Astro.site);
+const structuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: product.name, description, url: canonical.href, applicationCategory: "DeveloperApplication" };
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"/><meta name="color-scheme" content="light dark"/><title>{title}</title><meta name="description" content={description}/><link rel="canonical" href={canonical}/><meta property="og:type" content="website"/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:image" content={socialImage}/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={socialImage}/><script is:inline>document.documentElement.dataset.theme=localStorage.getItem("monoplate.theme")==="dark"||localStorage.getItem("monoplate.theme")!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";</script><script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} /></head><body><a class="skip-link" href="#content">Skip to content</a><slot /></body></html>

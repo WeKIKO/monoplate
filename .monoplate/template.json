@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "0.1.0",
+  "requiredCliVersion": ">=0.1.0",
+  "initializer": "node tooling/scripts/init-workspace.mjs",
+  "packageManager": "pnpm",
+  "node": ">=24"
+}

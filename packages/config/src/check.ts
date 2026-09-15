@@ -1,0 +1,10 @@
+import { config } from "dotenv";
+import { resolve } from "node:path";
+import { parseAdminEnv } from "./admin.js";
+import { parseMobileEnv } from "./mobile.js";
+import { parseServerEnv } from "./server.js";
+config({ path: resolve(process.cwd(), "../../.env"), quiet: true });
+parseServerEnv();
+parseAdminEnv(process.env);
+parseMobileEnv(process.env);
+console.log("Environment contract OK");

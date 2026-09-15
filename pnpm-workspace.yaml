@@ -1,0 +1,33 @@
+packages:
+  - apps/*
+  - domains/*
+  - packages/*
+
+allowBuilds:
+  '@sentry/cli': true
+  dtrace-provider: false
+  esbuild: true
+  protobufjs: true
+  sharp: true
+
+catalog:
+  typescript: ^5.9.0
+  zod: ^4.0.0
+
+catalogs:
+  mobile:
+    react: 19.2.3
+    react-native: 0.86.2
+
+overrides:
+  'eas-cli>minimatch': 5.1.8
+  'eas-cli>nanoid': 3.3.18
+  'eas-cli>tar': 7.5.21
+  undici: 7.29.0
+
+minimumReleaseAgeExclude:
+  - '@expo/apple-utils@2.2.1'
+  - '@expo/eas-build-job@24.5.0'
+  - '@expo/eas-json@24.5.0'
+  - '@expo/steps@24.5.0'
+  - eas-cli@24.5.0

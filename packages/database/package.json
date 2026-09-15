@@ -1,0 +1,33 @@
+{
+  "name": "@monoplate/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx src/cli/migrate.ts",
+    "push": "drizzle-kit push",
+    "seed": "tsx src/cli/seed.ts",
+    "studio": "drizzle-kit studio",
+    "test:reset": "tsx src/cli/reset-test.ts",
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "lint": "eslint src drizzle.config.ts"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0",
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.0"
+  },
+  "devDependencies": {
+    "@monoplate/typescript-config": "workspace:*",
+    "drizzle-kit": "^0.31.0",
+    "tsx": "^4.20.0",
+    "typescript": "catalog:",
+    "vitest": "^4.1.11"
+  }
+}

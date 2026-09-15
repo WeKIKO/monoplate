@@ -1,0 +1,14 @@
+node_modules/
+dist
+.turbo
+.astro
+.expo
+.env
+.env.*
+!.env.example
+coverage
+*.log
+sbom.json
+.local-storage/
+apps/mobile/android
+apps/mobile/ios

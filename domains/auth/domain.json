@@ -1,0 +1,1 @@
+{"name":"auth","entity":"User","kind":"domain","defaultEnabled":true,"description":"Single-tenant authentication and authorization"}

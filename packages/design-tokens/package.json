@@ -1,0 +1,1 @@
+{"name":"@monoplate/design-tokens","version":"0.1.0","private":true,"type":"module","exports":{".":"./src/index.ts","./tailwind":"./generated/tailwind.cjs","./css":"./generated/theme.css"},"scripts":{"typecheck":"tsc","test":"vitest run --passWithNoTests","lint":"eslint src"},"devDependencies":{"@monoplate/typescript-config":"workspace:*","typescript":"catalog:"}}

@@ -1,0 +1,1 @@
+{"extends":"@monoplate/typescript-config/base","include":["src"]}

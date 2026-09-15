@@ -1,0 +1,9 @@
+{
+  "name": "@monoplate/integrations",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./ports": "./src/ports.ts", "./testing": "./src/testing.ts", "./node": "./src/node.ts" },
+  "scripts": { "typecheck": "tsc", "test": "vitest run", "lint": "eslint src" },
+  "devDependencies": { "@monoplate/typescript-config": "workspace:*", "typescript": "catalog:", "vitest": "^4.1.11" }
+}

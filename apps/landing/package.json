@@ -1,0 +1,6 @@
+{
+  "name":"@monoplate/landing","version":"0.1.0","private":true,"type":"module",
+  "scripts":{"dev":"astro dev","build":"astro check && astro build","typecheck":"astro check","test":"vitest run --passWithNoTests","lint":"eslint src --no-error-on-unmatched-pattern"},
+  "dependencies":{"@monoplate/design-tokens":"workspace:*","@monoplate/ui":"workspace:*","@astrojs/check":"^0.9.10","@astrojs/sitemap":"^3.7.4","astro":"^7.3.2"},
+  "devDependencies":{"@monoplate/typescript-config":"workspace:*","typescript":"catalog:"}
+}
