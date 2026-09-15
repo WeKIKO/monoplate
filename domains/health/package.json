@@ -5,5 +5,5 @@
   "type": "module",
   "exports": { ".": "./src/public.ts" },
   "scripts": { "typecheck": "tsc", "test": "vitest run", "lint": "eslint src" },
-  "devDependencies": { "@monoplate/typescript-config": "workspace:*", "typescript": "catalog:", "vitest": "^4.1.11" }
+  "devDependencies": { "@monoplate/typescript-config": "workspace:*", "typescript": "catalog:", "vitest": "^5.0.0" }
 }
