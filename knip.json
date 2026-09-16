@@ -3,9 +3,9 @@
   "ignoreDependencies": [
     "@monoplate/typescript-config",
     "babel-preset-expo",
-    "eas-cli",
     "expo-font",
     "openapi-typescript",
+    "react-native-css-interop",
     "react-native-worklets"
   ],
   "ignoreFiles": [

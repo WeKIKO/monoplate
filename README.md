@@ -200,7 +200,7 @@ domains/* ─X→ apps/api, postgres-adapters, database, Drizzle
 
 ### Mobile app bootstrap과 storage 경계
 
-`apps/mobile/src/app/AppSetup.tsx`가 앱 시작에 필요한 초기화를 한곳에서 조율합니다. Font와 persisted query 복원 완료를 기다린 뒤 i18n, 인증 세션, 사용자 설정을 함께 복원하고, 모두 성공한 경우에만 splash를 닫고 앱 화면을 엽니다. OTA 확인은 첫 화면을 늦추지 않도록 bootstrap 성공 후 background에서 실행합니다.
+`apps/mobile/src/application/AppSetup.tsx`가 앱 시작에 필요한 초기화를 한곳에서 조율합니다. Font와 persisted query 복원 완료를 기다린 뒤 i18n, 인증 세션, 사용자 설정을 함께 복원하고, 모두 성공한 경우에만 splash를 닫고 앱 화면을 엽니다. OTA 확인은 첫 화면을 늦추지 않도록 bootstrap 성공 후 background에서 실행합니다. Expo Router가 `src/app`을 route root로 자동 인식하므로 application service는 `src/application`에 둡니다.
 
 초기화 실패 또는 timeout 시 아직 신뢰할 수 있는 화면이 없으므로 기존 화면 위의 반투명 overlay가 아니라 전체 화면 오류 UI로 전환합니다. 사용자가 `다시 시도`를 누르면 앱 프로세스를 재시작하지 않고 bootstrap 묶음만 새로 실행합니다. 이후 실행 중 발생하는 전역 render 오류는 `GlobalErrorBoundary`가 담당합니다.
 
@@ -357,6 +357,8 @@ pnpm check
 | `pnpm db:restore:verify` | `_test` DB에 백업 복원 검증 |
 
 ### Docker, EAS, 배포
+
+EAS CLI는 일반 workspace 설치에 포함하지 않습니다. 아래 명령은 고정된 `eas-cli@24.6.0`을 필요할 때만 `pnpm dlx`로 실행하므로, EAS의 빌드 도구 의존성이 평상시 `node_modules`와 보안 감사에 포함되지 않습니다.
 
 | 명령 | 설명 |
 |---|---|

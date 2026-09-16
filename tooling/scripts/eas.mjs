@@ -20,6 +20,8 @@ const args = command === "setup"
       ? ["update", "--environment", profileOrPlatform ?? "preview"]
       : ["submit", "--platform", profileOrPlatform ?? "all", "--profile", "production"];
 if (process.env.CI) args.push("--non-interactive");
-const result = spawnSync("pnpm", ["exec", "eas", ...args], { cwd: resolve(process.cwd(), "apps/mobile"), stdio: "inherit", env: process.env });
+// EAS is a release-only tool. Run a pinned version on demand so its large CLI
+// dependency tree does not become part of every workspace installation.
+const result = spawnSync("pnpm", ["dlx", "eas-cli@24.6.0", ...args], { cwd: resolve(process.cwd(), "apps/mobile"), stdio: "inherit", env: process.env });
 if (result.error) throw result.error;
 process.exitCode = result.status ?? 1;

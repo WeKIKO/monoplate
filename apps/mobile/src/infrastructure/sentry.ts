@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/react-native";
-import { env } from "#mobile/app/env";
+import { env } from "#mobile/application/env";
 import Constants from "expo-constants";
 import * as Updates from "expo-updates";
 
