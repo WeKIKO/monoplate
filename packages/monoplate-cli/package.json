@@ -1,6 +1,6 @@
 {
   "name": "@xierra/monoplate-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create a production-ready Monoplate application.",
   "type": "module",
   "bin": {
