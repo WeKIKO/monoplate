@@ -1,4 +1,4 @@
-import { argbFromHex, hexFromArgb, themeFromSourceColor } from "@material/material-color-utilities";
+import { argbFromHex, Hct, hexFromArgb, MaterialDynamicColors, SchemeMonochrome, themeFromSourceColor } from "@material/material-color-utilities";
 
 const hexColorPattern = /^#[0-9a-f]{6}$/i;
 const legacyColorKeys = ["background", "foreground", "primary", "danger"];
@@ -13,16 +13,48 @@ function schemeToHex(scheme) {
   return Object.fromEntries(Object.entries(scheme.toJSON()).map(([name, value]) => [name, hexFromArgb(value).toUpperCase()]));
 }
 
+function isAchromatic(hex) {
+  return hex.slice(1, 3) === hex.slice(3, 5) && hex.slice(3, 5) === hex.slice(5, 7);
+}
+
+function contrastingText(hex) {
+  const channels = [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255);
+  const [red, green, blue] = channels.map((channel) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  return (luminance + 0.05) / 0.05 >= 4.5 ? "#000000" : "#FFFFFF";
+}
+
+function monochromeSchemeToHex(seed, isDark) {
+  const scheme = new SchemeMonochrome(Hct.fromInt(argbFromHex(seed)), isDark, 0);
+  const colorNames = Object.keys(themeFromSourceColor(argbFromHex(seed)).schemes.light.toJSON());
+  const colors = Object.fromEntries(colorNames.map((name) => [name, hexFromArgb(MaterialDynamicColors[name].getArgb(scheme)).toUpperCase()]));
+  if (!isDark) {
+    colors.primary = seed;
+    colors.onPrimary = contrastingText(seed);
+  }
+  return colors;
+}
+
+function schemesFromSeed(seed) {
+  if (isAchromatic(seed)) {
+    return {
+      light: monochromeSchemeToHex(seed, false),
+      dark: monochromeSchemeToHex(seed, true),
+    };
+  }
+  const generated = themeFromSourceColor(argbFromHex(seed));
+  return { light: schemeToHex(generated.schemes.light), dark: schemeToHex(generated.schemes.dark) };
+}
+
 export function buildDesignTokens(source) {
   const primary = normalizeHexColor(source.primary);
-  const generated = themeFromSourceColor(argbFromHex(primary));
-  const light = schemeToHex(generated.schemes.light);
-  const dark = schemeToHex(generated.schemes.dark);
+  const { light, dark } = schemesFromSeed(primary);
   const roleSeeds = { secondary: source.secondary, tertiary: source.tertiary, error: source.error };
   for (const [role, seed] of Object.entries(roleSeeds)) {
     if (!seed) continue;
-    const roleScheme = schemeToHex(themeFromSourceColor(argbFromHex(normalizeHexColor(seed))).schemes.light);
-    const roleDarkScheme = schemeToHex(themeFromSourceColor(argbFromHex(normalizeHexColor(seed))).schemes.dark);
+    const roleSchemes = schemesFromSeed(normalizeHexColor(seed));
+    const roleScheme = roleSchemes.light;
+    const roleDarkScheme = roleSchemes.dark;
     const prefix = role === "error" ? "error" : role;
     const sourcePrefix = "primary";
     for (const [target, sourceKey] of [[prefix, sourcePrefix], [`on${prefix[0].toUpperCase()}${prefix.slice(1)}`, `on${sourcePrefix[0].toUpperCase()}${sourcePrefix.slice(1)}`], [`${prefix}Container`, `${sourcePrefix}Container`], [`on${prefix[0].toUpperCase()}${prefix.slice(1)}Container`, `on${sourcePrefix[0].toUpperCase()}${sourcePrefix.slice(1)}Container`]]) {

@@ -46,6 +46,10 @@ npm package에는 CLI만 포함되고, Monoplate 전체 소스는 실행 시 공
 | `--tertiary-color` | primary에서 생성 / derived | tertiary seed |
 | `--error-color` | primary에서 생성 / derived | error seed |
 
+RGB 채널이 같은 primary seed(예: `#000000`, `#777777`)는 자동으로 Material 3 monochrome scheme을 사용합니다. 라이트 테마의 primary는 입력한 seed를 그대로 유지하고, 다크 테마는 읽기 쉬운 대비색을 생성합니다.
+
+Achromatic primary seeds automatically use the Material 3 monochrome scheme, preserving the exact seed as the light-theme primary while generating an accessible dark-theme counterpart.
+
 light/dark scheme 모두에 `on*`, `*Container`, surface, outline, inverse semantic token이 생성됩니다. Both schemes include on-colors, containers, surfaces, outlines, and inverse tokens.
 
 ## 옵션 | Options

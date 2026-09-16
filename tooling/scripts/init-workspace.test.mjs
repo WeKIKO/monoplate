@@ -67,6 +67,15 @@ describe("workspace initializer", () => {
     expect(theme).not.toContain("#4F46E5");
   });
 
+  it("uses a monochrome scheme and preserves an achromatic primary seed", async () => {
+    const root = await fixture();
+    await initialize({ root, args: { namespace: "acme", name: "shop", primaryColor: "#000000" }, output: { write() {} } });
+    const theme = await readFile(join(root, "packages/design-tokens/generated/theme.css"), "utf8");
+    expect(theme).toMatch(/:root \{[\s\S]*?--color-primary: #000000;/);
+    expect(theme).toMatch(/:root\[data-theme="dark"\], \.dark \{[\s\S]*?--color-primary: #FFFFFF;/);
+    expect(theme).not.toContain("#984061");
+  });
+
   it("rolls back every write after a failure", async () => {
     const root = await fixture();
     const before = await readFile(join(root, "package.json"), "utf8");
