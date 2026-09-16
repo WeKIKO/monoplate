@@ -65,16 +65,16 @@
   },
   "devDependencies": {
     "@cyclonedx/cdxgen": "12.8.4",
-    "@eslint/js": "^9.0.0",
-    "@types/node": "^24.0.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.5.1",
     "dotenv": "^17.4.2",
     "eas-cli": "24.5.0",
-    "eslint": "^9.0.0",
-    "knip": "^5.64.1",
-    "openapi-typescript": "7.10.1",
+    "eslint": "^10.10.0",
+    "knip": "^6.35.1",
+    "openapi-typescript": "7.13.0",
     "turbo": "^2.0.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.0.0",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   }
 }
