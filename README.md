@@ -321,8 +321,12 @@ pnpm check
 | `pnpm admin:dev` | Admin 개발 서버 |
 | `pnpm landing:dev` | Landing 개발 서버 |
 | `pnpm mobile:start` | Expo dev client 시작 |
-| `pnpm mobile:ios` | iOS native 실행 |
-| `pnpm mobile:android` | Android native 실행 |
+| `pnpm prebuild` | Expo native project(`apps/mobile/ios`, `apps/mobile/android`) 생성 |
+| `pnpm ios` | iOS native app 로컬 빌드 및 실행 (`expo run:ios`) |
+| `pnpm android` | Android native app 로컬 빌드 및 실행 (`expo run:android`) |
+| `pnpm mobile:prebuild` | `pnpm prebuild`와 동일한 명시적 Mobile 명령 |
+| `pnpm mobile:ios` | `pnpm ios`와 동일한 명시적 Mobile 명령 |
+| `pnpm mobile:android` | `pnpm android`와 동일한 명시적 Mobile 명령 |
 | `pnpm check` | env, architecture, dependency, migration, contract, lint, typecheck, test, build, Expo doctor 전체 gate |
 | `pnpm deps:check` | package manifest의 미사용·누락 dependency 검사 |
 | `pnpm security:check` | secret scan과 High/Critical dependency audit |
