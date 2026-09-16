@@ -12,11 +12,16 @@ async function fixture(prefix = "monoplate test ") {
   const root = await mkdtemp(join(tmpdir(), prefix));
   roots.push(root);
   await mkdir(join(root, "apps/mobile"), { recursive: true });
+  await mkdir(join(root, "apps/api/src/observability"), { recursive: true });
+  await mkdir(join(root, "apps/admin/src"), { recursive: true });
   await mkdir(join(root, "apps/landing/src/pages"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/generated"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/src"), { recursive: true });
   await writeFile(join(root, "package.json"), '{"name": "monoplate", "dependencies":{"@monoplate/config":"workspace:*"}}\n');
   await writeFile(join(root, "apps/mobile/app.config.ts"), 'export default { ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "com.monoplate.app" }, android: { package: process.env.ANDROID_PACKAGE ?? "com.monoplate.app" } };\n');
+  await writeFile(join(root, "compose.yaml"), 'environment:\n  POSTGRES_DB: monoplate\nhealthcheck:\n  test: ["CMD-SHELL", "pg_isready -U postgres -d monoplate"]\n');
+  await writeFile(join(root, "apps/api/src/observability/metrics.ts"), 'export const metric = "monoplate_http_requests_total";\n');
+  await writeFile(join(root, "apps/admin/src/main.tsx"), 'export const key = "monoplate.admin.access-token"; export const brand = <strong>Monoplate</strong>;\n');
   await writeFile(join(root, "apps/landing/src/pages/index.astro"), '---\nimport "@monoplate/design-tokens/css";\nimport { appPath } from "@monoplate/ui/core";\n---\n');
   await writeFile(join(root, "packages/design-tokens/tokens.json"), '{"primary":"#4F46E5","fonts":{"body":"Inter_400Regular","heading":"Inter_700Bold"},"spacing":{"md":16},"radius":{"md":10}}\n');
   await writeFile(join(root, "packages/design-tokens/generated/theme.css"), "stale\n");
@@ -47,6 +52,10 @@ describe("workspace initializer", () => {
     expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).toContain(`@${namespace}/ui/core`);
     expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).not.toContain("@monoplate/");
     expect(await readFile(join(root, "apps/mobile/app.config.ts"), "utf8")).toContain(iosBundleIdentifier);
+    expect(await readFile(join(root, "compose.yaml"), "utf8")).toContain(`pg_isready -U postgres -d ${name.replaceAll("-", "_")}`);
+    expect(await readFile(join(root, "apps/api/src/observability/metrics.ts"), "utf8")).toContain(`${name.replaceAll("-", "_")}_http_requests_total`);
+    expect(await readFile(join(root, "apps/admin/src/main.tsx"), "utf8")).toContain(`"${name}.admin.access-token"`);
+    expect(await readFile(join(root, "apps/admin/src/main.tsx"), "utf8")).toContain(`<strong>${displayName}</strong>`);
     expect(JSON.parse(await readFile(join(root, ".monoplate/generated.json"), "utf8"))).toMatchObject({ generator: "monoplate", templateVersion: "0.1.0" });
   });
 

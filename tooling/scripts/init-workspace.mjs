@@ -98,8 +98,12 @@ export async function initialize({ root, args, output = stdout }) {
     ["@monoplate/", `@${namespace}/`], ['"name": "monoplate"', `"name": "${project}"`],
     ["Monoplate Admin", `${displayName} Admin`], ["Welcome to Monoplate", `Welcome to ${displayName}`],
     ["Monoplate에 오신 것을 환영합니다", `${displayName}에 오신 것을 환영합니다`], ["MONOPLATE_QUERY_CACHE", `${envPrefix}_QUERY_CACHE`],
-    ["monoplate-api", `${project}-api`], ["monoplate_test", `${databaseName}_test`], [":5432/monoplate", `:5432/${databaseName}`],
-    ["POSTGRES_DB: monoplate", `POSTGRES_DB: ${databaseName}`], ['?? "Monoplate"', `?? "${displayName}"`], ['?? "monoplate"', `?? "${project}"`]
+    ["monoplate-api", `${project}-api`], ["monoplate_test", `${databaseName}_test`], [":5432/monoplate", `:5432/${databaseName}`], ["-d monoplate", `-d ${databaseName}`],
+    ["POSTGRES_DB: monoplate", `POSTGRES_DB: ${databaseName}`], ['?? "Monoplate"', `?? "${displayName}"`], ['?? "monoplate"', `?? "${project}"`],
+    ['"Monoplate API"', `"${displayName} API"`], ["monoplate_http", `${databaseName}_http`], ["monoplate-http", `${project}-http`],
+    ['"monoplate.', `"${project}.`], ["<strong>Monoplate</strong>", `<strong>${displayName}</strong>`], ["<p>MONOPLATE</p>", `<p>${displayName.toUpperCase()}</p>`],
+    [">Monoplate</text>", `>${displayName}</text>`], ['name: "Monoplate"', `name: "${displayName}"`], ['title: "Monoplate —', `title: "${displayName} —`],
+    ["# Monoplate\n", `# ${displayName}\n`]
   ];
   const changes = [];
   const generatedTokenFiles = new Map();
