@@ -24,7 +24,7 @@ export function buildDesignTokens(source) {
     const roleScheme = schemeToHex(themeFromSourceColor(argbFromHex(normalizeHexColor(seed))).schemes.light);
     const roleDarkScheme = schemeToHex(themeFromSourceColor(argbFromHex(normalizeHexColor(seed))).schemes.dark);
     const prefix = role === "error" ? "error" : role;
-    const sourcePrefix = role === "error" ? "error" : "primary";
+    const sourcePrefix = "primary";
     for (const [target, sourceKey] of [[prefix, sourcePrefix], [`on${prefix[0].toUpperCase()}${prefix.slice(1)}`, `on${sourcePrefix[0].toUpperCase()}${sourcePrefix.slice(1)}`], [`${prefix}Container`, `${sourcePrefix}Container`], [`on${prefix[0].toUpperCase()}${prefix.slice(1)}Container`, `on${sourcePrefix[0].toUpperCase()}${sourcePrefix.slice(1)}Container`]]) {
       light[target] = roleScheme[sourceKey];
       dark[target] = roleDarkScheme[sourceKey];

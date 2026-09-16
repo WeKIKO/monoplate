@@ -30,10 +30,13 @@ describe("monoplate CLI", () => {
   it("removes template-only paths and rejects escapes", () => {
     const root = mkdtempSync(join(tmpdir(), "monoplate-cli-"));
     mkdirSync(join(root, "notes"));
+    mkdirSync(join(root, ".github/workflows"), { recursive: true });
     writeFileSync(join(root, "notes/internal.txt"), "private");
-    writeFileSync(join(root, ".template-ignore"), "notes\n");
-    expect(applyTemplateIgnore(root)).toEqual(["notes"]);
+    writeFileSync(join(root, ".github/workflows/publish-cli.yml"), "name: publish\n");
+    writeFileSync(join(root, ".template-ignore"), "notes\n.github/workflows/publish-cli.yml\n");
+    expect(applyTemplateIgnore(root)).toEqual(["notes", ".github/workflows/publish-cli.yml"]);
     expect(() => readFileSync(join(root, "notes/internal.txt"))).toThrow();
+    expect(() => readFileSync(join(root, ".github/workflows/publish-cli.yml"))).toThrow();
     writeFileSync(join(root, ".template-ignore"), "../outside\n");
     expect(() => applyTemplateIgnore(root)).toThrow("Unsafe");
   });

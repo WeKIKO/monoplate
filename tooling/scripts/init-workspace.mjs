@@ -6,7 +6,7 @@ import { stdin, stdout } from "node:process";
 import { buildDesignTokens, normalizeHexColor, renderDesignTokenOutputs } from "./lib/design-tokens.mjs";
 
 const skippedDirectories = new Set([".git", ".turbo", ".astro", ".expo", "node_modules", "dist", "coverage", "android", "ios"]);
-const textExtensions = new Set([".cjs", ".css", ".json", ".md", ".mjs", ".sh", ".ts", ".tsx", ".yaml", ".yml"]);
+const textExtensions = new Set([".astro", ".cjs", ".css", ".json", ".md", ".mjs", ".sh", ".ts", ".tsx", ".yaml", ".yml"]);
 const textFileNames = new Set(["Dockerfile", ".env.example"]);
 const featureNames = ["admin", "sentry", "auth", "database", "eas", "observability"];
 

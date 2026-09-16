@@ -1,3 +1,5 @@
 .github/CODEOWNERS
+.github/workflows/publish-cli.yml
+.github/workflows/template.yml
 notes
 packages/monoplate-cli

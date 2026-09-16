@@ -11,10 +11,12 @@ async function fixture(prefix = "monoplate test ") {
   const root = await mkdtemp(join(tmpdir(), prefix));
   roots.push(root);
   await mkdir(join(root, "apps/mobile"), { recursive: true });
+  await mkdir(join(root, "apps/landing/src/pages"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/generated"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/src"), { recursive: true });
   await writeFile(join(root, "package.json"), '{"name": "monoplate", "dependencies":{"@monoplate/config":"workspace:*"}}\n');
   await writeFile(join(root, "apps/mobile/app.config.ts"), 'export default { ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "com.monoplate.app" }, android: { package: process.env.ANDROID_PACKAGE ?? "com.monoplate.app" } };\n');
+  await writeFile(join(root, "apps/landing/src/pages/index.astro"), '---\nimport "@monoplate/design-tokens/css";\nimport { appPath } from "@monoplate/ui/core";\n---\n');
   await writeFile(join(root, "packages/design-tokens/tokens.json"), '{"primary":"#4F46E5","fonts":{"body":"Inter_400Regular","heading":"Inter_700Bold"},"spacing":{"md":16},"radius":{"md":10}}\n');
   await writeFile(join(root, "packages/design-tokens/generated/theme.css"), "stale\n");
   await writeFile(join(root, "packages/design-tokens/generated/tailwind.cjs"), "stale\n");
@@ -31,6 +33,8 @@ describe("workspace initializer", () => {
     const result = await initialize({ root, args: { namespace, name, displayName, iosBundleIdentifier, androidPackage }, output: { write() {} } });
     expect(result.metadata).toMatchObject({ project: name, namespace: `@${namespace}`, displayName, iosBundleIdentifier, androidPackage });
     expect(await readFile(join(root, "package.json"), "utf8")).toContain(`@${namespace}/config`);
+    expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).toContain(`@${namespace}/ui/core`);
+    expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).not.toContain("@monoplate/");
     expect(await readFile(join(root, "apps/mobile/app.config.ts"), "utf8")).toContain(iosBundleIdentifier);
     expect(JSON.parse(await readFile(join(root, ".monoplate/generated.json"), "utf8"))).toMatchObject({ generator: "monoplate", templateVersion: "0.1.0" });
   });
@@ -59,6 +63,7 @@ describe("workspace initializer", () => {
     const theme = await readFile(join(root, "packages/design-tokens/generated/theme.css"), "utf8");
     expect(theme).toContain(':root[data-theme="dark"], .dark');
     expect(theme).toContain("--color-primary-container:");
+    expect(theme).not.toContain("--color-error: #BA1A1A;");
     expect(theme).not.toContain("#4F46E5");
   });
 
