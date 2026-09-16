@@ -4,7 +4,7 @@ import { useIsRestoring } from "@tanstack/react-query";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState, type ReactNode } from "react";
 import { i18n } from "./i18n";
-import { checkForOtaUpdate } from "../infrastructure/ota-updates";
+import { checkForOtaUpdate } from "#mobile/infrastructure/ota-updates";
 
 export function AppSetup({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);

@@ -1,13 +1,15 @@
 import { serve } from "@hono/node-server";
 import { createDatabaseConnection } from "@monoplate/database";
+import { loadWorkspaceEnvironment } from "@monoplate/config/load";
 import { parseServerEnv } from "@monoplate/config/server";
+import { DrizzleAuthRepository } from "@monoplate/postgres-adapters/auth";
 import { createApp } from "./app.js";
 import { createLogger } from "./infrastructure/pino-logger.js";
 import { AuthService } from "./modules/auth/auth-service.js";
-import { DrizzleAuthRepository } from "./modules/auth/infrastructure/drizzle-auth-repository.js";
 import { JwtTokenService } from "./modules/auth/infrastructure/jwt-token-service.js";
 import { initializeTelemetry } from "./observability/telemetry.js";
 
+loadWorkspaceEnvironment();
 const env = parseServerEnv();
 const logger = createLogger();
 async function start() {

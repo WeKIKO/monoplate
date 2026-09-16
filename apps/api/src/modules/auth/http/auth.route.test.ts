@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import type { AuthRepository, Session, User, UserRole } from "@monoplate/auth";
-import { AuthService } from "../auth-service.js";
-import { JwtTokenService } from "../infrastructure/jwt-token-service.js";
+import { AuthService } from "#api/modules/auth/auth-service.js";
+import { JwtTokenService } from "#api/modules/auth/infrastructure/jwt-token-service.js";
 import { createAuthRoute } from "./auth.route.js";
-import { createApp } from "../../../app.js";
+import { createApp } from "#api/app.js";
 import { noopLogger } from "@monoplate/logger";
 
 const user: User = { id: "878a9dc8-fd7e-4eeb-bc4d-01e196ffe043", email: "admin@example.com", passwordHash: "unused", role: "admin" };

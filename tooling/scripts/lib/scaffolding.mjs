@@ -100,9 +100,10 @@ export async function regenerateDomainModule(domain) {
   }).join("\n");
   const manifest = await readJson(join(ROOT, "domains", domain, "domain.json"));
   const entity = manifest.entity ?? pascal(domain);
-  const adapterImports = `import { Drizzle${entity}Repository } from "./infrastructure/drizzle-${domain}-repository.js";\nimport { InMemory${entity}Repository } from "./infrastructure/in-memory-${domain}-repository.js";`;
+  const scope = await namespace();
+  const adapterImports = `import { Drizzle${entity}Repository } from "${scope}/postgres-adapters/${domain}";\nimport { InMemory${entity}Repository } from "./infrastructure/in-memory-${domain}-repository.js";`;
   const registrations = routeFiles.map((file) => `routes.route("/", create${pascal(file.replace(/\.route\.ts$/, ""))}Route(repository));`).join("\n");
-  await writeFile(join(moduleRoot, "module.ts"), `import { createApiRouter } from "../../http/route-factory.js";\nimport type { ApiModuleFactory } from "../types.js";\n${adapterImports}\n${routeImports}${routeImports ? "\n" : ""}\nexport const create${pascal(domain)}Module: ApiModuleFactory = (dependencies) => {\n  const repository = dependencies.database\n    ? new Drizzle${entity}Repository(dependencies.database)\n    : new InMemory${entity}Repository();\n  const routes = createApiRouter();\n  ${registrations.replaceAll("\n", "\n  ")}\n  return { name: "${domain}", routes };\n};\n`);
+  await writeFile(join(moduleRoot, "module.ts"), `import { createApiRouter } from "#api/http/route-factory.js";\nimport type { ApiModuleFactory } from "#api/modules/types.js";\n${adapterImports}\n${routeImports}${routeImports ? "\n" : ""}\nexport const create${pascal(domain)}Module: ApiModuleFactory = (dependencies) => {\n  const repository = dependencies.database\n    ? new Drizzle${entity}Repository(dependencies.database)\n    : new InMemory${entity}Repository();\n  const routes = createApiRouter();\n  ${registrations.replaceAll("\n", "\n  ")}\n  return { name: "${domain}", routes };\n};\n`);
 }
 
 export async function addWorkspaceDependency(packageName) {

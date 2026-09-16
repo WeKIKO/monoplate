@@ -1,0 +1,27 @@
+{
+  "name": "@monoplate/postgres-adapters",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./auth": "./src/auth.ts",
+    "./health": "./src/health.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@monoplate/auth": "workspace:*",
+    "@monoplate/database": "workspace:*",
+    "@monoplate/health": "workspace:*",
+    "@monoplate/logger": "workspace:*",
+    "drizzle-orm": "^0.45.2"
+  },
+  "devDependencies": {
+    "@monoplate/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "^4.1.11"
+  }
+}

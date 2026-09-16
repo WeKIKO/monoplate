@@ -1,7 +1,7 @@
 import { AuthResponseSchema, LoginRequestSchema, LogoutResponseSchema, MeResponseSchema, RefreshRequestSchema } from "@monoplate/contracts/auth";
 import { JsonContentTypeHeaderSchema } from "@monoplate/contracts/http";
-import { createApiRouter, createRoute, jsonContent, standardErrorResponses } from "../../../http/route-factory.js";
-import type { AuthService } from "../auth-service.js";
+import { createApiRouter, createRoute, jsonContent, standardErrorResponses } from "#api/http/route-factory.js";
+import type { AuthService } from "#api/modules/auth/auth-service.js";
 import { requireAuthentication } from "./auth.middleware.js";
 
 const body = <T>(schema: T) => ({ headers: JsonContentTypeHeaderSchema, body: { required: true, content: { "application/json": { schema } } } } as const);

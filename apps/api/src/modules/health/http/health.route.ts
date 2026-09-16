@@ -1,6 +1,6 @@
 import { HealthResponseSchema } from "@monoplate/contracts/health";
 import { getHealth, getReadiness, type ReadinessProbe } from "@monoplate/health";
-import { createApiRouter, createRoute, jsonContent, standardErrorResponses } from "../../../http/route-factory.js";
+import { createApiRouter, createRoute, jsonContent, standardErrorResponses } from "#api/http/route-factory.js";
 
 const liveDefinition = createRoute({
   method: "get",

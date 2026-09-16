@@ -14,11 +14,6 @@ catalog:
   typescript: ^5.9.0
   zod: ^4.0.0
 
-catalogs:
-  mobile:
-    react: 19.2.3
-    react-native: 0.86.2
-
 overrides:
   'eas-cli>minimatch': 5.1.8
   'eas-cli>nanoid': 3.3.18
@@ -31,3 +26,7 @@ minimumReleaseAgeExclude:
   - '@expo/eas-json@24.5.0'
   - '@expo/steps@24.5.0'
   - eas-cli@24.5.0
+  - '@expo/cli@57.0.25'
+  - '@expo/router-server@57.0.10'
+  - babel-preset-expo@57.0.12
+  - expo@57.0.23

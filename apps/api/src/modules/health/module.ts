@@ -1,6 +1,6 @@
-import { createApiRouter } from "../../http/route-factory.js";
-import { PostgresReadinessProbe } from "../../infrastructure/postgres-readiness-probe.js";
-import type { ApiModuleFactory } from "../types.js";
+import { createApiRouter } from "#api/http/route-factory.js";
+import { PostgresReadinessProbe } from "@monoplate/postgres-adapters/health";
+import type { ApiModuleFactory } from "#api/modules/types.js";
 import { createHealthRoute } from "./http/health.route.js";
 
 export const createHealthModule: ApiModuleFactory = (dependencies) => {

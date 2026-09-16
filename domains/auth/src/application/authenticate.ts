@@ -1,4 +1,4 @@
-import type { AuthTokens } from "../domain/auth.js";
+import type { AuthTokens } from "#auth/domain/auth.js";
 import type { AuthRepository, PasswordHasher, TokenService } from "./ports.js";
 
 export class InvalidCredentialsError extends Error {}

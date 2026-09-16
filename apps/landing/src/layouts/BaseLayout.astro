@@ -1,5 +1,5 @@
 ---
-import { product } from "../config/product";
+import { product } from "#landing/config/product";
 interface Props { title?: string; description?: string; image?: string; }
 const { title = product.title, description = product.description, image = product.image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);

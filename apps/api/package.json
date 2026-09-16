@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#api/*": "./src/*"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "esbuild src/server.ts --bundle --platform=node --format=cjs --outfile=dist/server.cjs --sourcemap && esbuild src/migrate.ts --bundle --platform=node --format=esm --outfile=dist/migrate.mjs --sourcemap",
@@ -24,19 +27,19 @@
     "@monoplate/errors": "workspace:*",
     "@monoplate/health": "workspace:*",
     "@monoplate/logger": "workspace:*",
+    "@monoplate/postgres-adapters": "workspace:*",
     "hono": "^4.10.0",
     "jose": "^6.1.0",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/auto-instrumentations-node": "0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.222.0",
     "@opentelemetry/sdk-node": "0.222.0",
-    "drizzle-orm": "^0.45.2",
     "pino": "^9.0.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@monoplate/typescript-config": "workspace:*",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.0",
     "tsx": "^4.20.0",
     "typescript": "catalog:",
     "vitest": "^4.1.11"

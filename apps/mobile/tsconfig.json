@@ -1,1 +1,1 @@
-{"extends":"expo/tsconfig.base","compilerOptions":{"strict":true,"noUncheckedIndexedAccess":true,"exactOptionalPropertyTypes":true,"types":["nativewind/types"]},"include":["app","src","app.config.ts","nativewind-env.d.ts"]}
+{"extends":"expo/tsconfig.base","compilerOptions":{"strict":true,"noUncheckedIndexedAccess":true,"exactOptionalPropertyTypes":true,"types":["nativewind/types"],"paths":{"#mobile/*":["./src/*"]}},"include":["app","src","app.config.ts","nativewind-env.d.ts"]}

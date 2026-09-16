@@ -33,11 +33,21 @@ async function workspacePackages() {
 
 const packages = await workspacePackages();
 for (const [name, details] of packages) {
+  if (details.root.startsWith(join(ROOT, config.domainRoot))) {
+    const manifest = await readJson(join(details.root, "package.json"));
+    for (const section of ["dependencies", "peerDependencies", "optionalDependencies"]) {
+      for (const dependency of Object.keys(manifest[section] ?? {})) errors.push(`${workspacePath(join(details.root, "package.json"))}: domain package may not declare ${section}.${dependency}`);
+    }
+  }
   for (const file of await walkSourceFiles(details.root)) {
     const relativeFile = workspacePath(file);
     const normalized = relativeFile.split(sep).join("/");
     const source = await readFile(file, "utf8");
     for (const specifier of importsOf(source)) {
+      if (specifier.startsWith("../")) errors.push(`${relativeFile}: parent-relative import ${specifier} is not allowed; use the package's # namespace`);
+      if ((normalized.includes("/domains/") || normalized.startsWith("domains/")) && normalized.includes("/src/") && !normalized.endsWith(".test.ts") && !normalized.endsWith(".test.tsx") && !specifier.startsWith(".") && !specifier.startsWith("#")) {
+        errors.push(`${relativeFile}: domain production source may not import external package ${specifier}`);
+      }
       const targetPackage = packageRoot(specifier);
       if (targetPackage && packages.has(targetPackage) && specifier !== targetPackage) {
         const subpath = `.${specifier.slice(targetPackage.length)}`;

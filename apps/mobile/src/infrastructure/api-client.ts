@@ -1,4 +1,4 @@
-import { env } from "../app/env";
+import { env } from "#mobile/app/env";
 import { resolveApiUrl } from "./api-url";
 const apiUrl = resolveApiUrl(env.EXPO_PUBLIC_API_URL, { ...(process.env.EXPO_OS ? { platform: process.env.EXPO_OS } : {}), ...(env.EXPO_PUBLIC_DEV_HOST ? { devHost: env.EXPO_PUBLIC_DEV_HOST } : {}) });
 let getAccessToken: () => Promise<string | null> = async () => null;

@@ -1,7 +1,8 @@
 import { resolve } from "node:path";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { createDatabaseConnection, requireDatabaseUrl } from "../client.js";
+import { createDatabaseConnection, requireDatabaseUrl } from "#database/client.js";
 import { seedDatabase } from "./seed.js";
+import "./load-environment.js";
 
 const url = requireDatabaseUrl();
 const databaseName = new URL(url).pathname.slice(1);

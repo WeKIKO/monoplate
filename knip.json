@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreDependencies": [
+    "@monoplate/typescript-config",
+    "babel-preset-expo",
+    "eas-cli",
+    "expo-font",
+    "openapi-typescript",
+    "react-native-worklets"
+  ],
+  "ignoreFiles": [
+    "apps/mobile/babel.config.cjs",
+    "apps/mobile/metro.config.cjs"
+  ]
+}

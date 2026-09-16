@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
-import { createDatabaseConnection, requireDatabaseUrl } from "../client.js";
-import { appSettings } from "../schema/app-settings.js";
+import { createDatabaseConnection, requireDatabaseUrl } from "#database/client.js";
+import { appSettings } from "#database/schema/app-settings.js";
+import "./load-environment.js";
 
 export async function seedDatabase(url = requireDatabaseUrl()) {
   const connection = createDatabaseConnection(url);

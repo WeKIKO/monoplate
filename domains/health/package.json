@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "imports": { "#health/*": "./src/*" },
   "exports": { ".": "./src/public.ts" },
   "scripts": { "typecheck": "tsc", "test": "vitest run", "lint": "eslint src" },
   "devDependencies": { "@monoplate/typescript-config": "workspace:*", "typescript": "catalog:", "vitest": "^4.1.11" }

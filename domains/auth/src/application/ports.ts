@@ -1,4 +1,4 @@
-import type { Session, User, UserRole } from "../domain/auth.js";
+import type { Session, User, UserRole } from "#auth/domain/auth.js";
 export interface AuthRepository {
   findUserByEmail(email: string): Promise<User | undefined>;
   findUserById(id: string): Promise<User | undefined>;

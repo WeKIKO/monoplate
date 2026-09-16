@@ -1,8 +1,10 @@
 import { parseServerEnv } from "@monoplate/config/server";
+import { loadWorkspaceEnvironment } from "@monoplate/config/load";
 import { createDatabaseConnection, requireDatabaseUrl } from "@monoplate/database";
-import { DrizzleAuthRepository } from "./modules/auth/infrastructure/drizzle-auth-repository.js";
+import { DrizzleAuthRepository } from "@monoplate/postgres-adapters/auth";
 import { NodePasswordHasher } from "./modules/auth/infrastructure/node-password-hasher.js";
 
+loadWorkspaceEnvironment();
 const env = parseServerEnv();
 if (!env.AUTH_BOOTSTRAP_EMAIL || !env.AUTH_BOOTSTRAP_PASSWORD) throw new Error("AUTH_BOOTSTRAP_EMAIL and AUTH_BOOTSTRAP_PASSWORD are required");
 const connection = createDatabaseConnection(requireDatabaseUrl());

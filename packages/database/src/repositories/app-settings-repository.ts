@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { Database } from "../client.js";
-import { appSettings } from "../schema/app-settings.js";
+import type { Database } from "#database/client.js";
+import { appSettings } from "#database/schema/app-settings.js";
 
 export class AppSettingsRepository {
   constructor(private readonly database: Database) {}

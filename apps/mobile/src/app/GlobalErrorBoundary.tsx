@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Text, View } from "react-native";
-import { captureException } from "../infrastructure/sentry";
+import { captureException } from "#mobile/infrastructure/sentry";
 
 export class GlobalErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };

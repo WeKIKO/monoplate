@@ -1,6 +1,6 @@
 {
   "name":"@monoplate/admin","version":"0.1.0","private":true,"type":"module",
   "scripts":{"dev":"vite","build":"tsc && vite build","typecheck":"tsc","test":"vitest run --passWithNoTests","lint":"eslint src"},
-  "dependencies":{"@monoplate/config":"workspace:*","@monoplate/design-tokens":"workspace:*","@monoplate/ui":"workspace:*","@tanstack/react-query":"5.102.8","@vitejs/plugin-react":"^5.0.0","vite":"^7.0.0","react":"catalog:mobile","react-dom":"19.2.3","react-router-dom":"7.18.3"},
-  "devDependencies":{"@monoplate/typescript-config":"workspace:*","@types/react":"^19.0.0","@types/react-dom":"^19.0.0","typescript":"catalog:"}
+  "dependencies":{"@monoplate/config":"workspace:*","@monoplate/design-tokens":"workspace:*","@monoplate/ui":"workspace:*","@tanstack/react-query":"5.102.8","react":"19.2.3","react-dom":"19.2.3","react-router-dom":"7.18.3"},
+  "devDependencies":{"@monoplate/typescript-config":"workspace:*","@types/react":"^19.0.0","@types/react-dom":"^19.0.0","@vitejs/plugin-react":"^5.0.0","typescript":"catalog:","vite":"^7.0.0"}
 }

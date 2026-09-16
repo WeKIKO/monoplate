@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { setAccessTokenProvider, setTokenRefreshHandler } from "../infrastructure/api-client";
-import { credentialsStorage } from "../infrastructure/storage";
+import { setAccessTokenProvider, setTokenRefreshHandler } from "#mobile/infrastructure/api-client";
+import { credentialsStorage } from "#mobile/infrastructure/storage";
 import { env } from "./env";
 type User = Readonly<{ id: string; email: string; role: "admin" | "member" }>;
 type Tokens = Readonly<{ accessToken: string; refreshToken: string; user: User }>;

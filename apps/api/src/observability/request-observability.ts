@@ -1,7 +1,7 @@
 import { trace } from "@opentelemetry/api";
 import type { Logger } from "@monoplate/logger";
 import { createMiddleware } from "hono/factory";
-import type { ApiEnvironment } from "../http/route-factory.js";
+import type { ApiEnvironment } from "#api/http/route-factory.js";
 import type { ApiMetrics } from "./metrics.js";
 export function requestObservability(logger: Logger, metrics: ApiMetrics) {
   const tracer = trace.getTracer("monoplate-http");

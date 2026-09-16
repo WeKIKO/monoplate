@@ -1,6 +1,6 @@
 import { and, eq, gt } from "drizzle-orm";
-import type { Database } from "../client.js";
-import { idempotencyKeys } from "../schema/idempotency.js";
+import type { Database } from "#database/client.js";
+import { idempotencyKeys } from "#database/schema/idempotency.js";
 export type IdempotencyRecord = Readonly<{ method: string; path: string; status: number; body: unknown }>;
 export class IdempotencyRepository {
   constructor(private readonly database: Database) {}

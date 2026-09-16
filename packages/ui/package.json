@@ -13,12 +13,13 @@
     "test": "vitest run",
     "lint": "eslint src"
   },
-  "dependencies": {
-    "react": "catalog:mobile"
+  "peerDependencies": {
+    "react": ">=19.0.0 <20.0.0"
   },
   "devDependencies": {
     "@monoplate/typescript-config": "workspace:*",
     "@types/react": "^19.0.0",
+    "react": "19.2.3",
     "typescript": "catalog:"
   }
 }

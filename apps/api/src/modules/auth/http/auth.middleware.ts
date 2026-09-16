@@ -1,7 +1,7 @@
 import { AppError } from "@monoplate/errors";
 import { createMiddleware } from "hono/factory";
-import type { AuthService } from "../auth-service.js";
-import type { ApiEnvironment } from "../../../http/route-factory.js";
+import type { AuthService } from "#api/modules/auth/auth-service.js";
+import type { ApiEnvironment } from "#api/http/route-factory.js";
 
 export function requireAuthentication(auth: AuthService) {
   return createMiddleware<ApiEnvironment>(async (context, next) => {

@@ -99,7 +99,8 @@ domains/
 packages/
 ├── config/              # 환경변수 계약
 ├── contracts/           # API Zod schema와 생성 client type
-├── database/            # Drizzle schema, migration, repository adapter
+├── database/            # Drizzle client, schema와 migration
+├── postgres-adapters/   # domain port를 구현하는 Drizzle outbound adapter
 ├── design-tokens/       # 디자인 토큰 원본과 생성 결과
 ├── integrations/        # email/storage/payment/job port와 adapter
 ├── logger/              # logger port
@@ -124,6 +125,54 @@ HTTP/UI adapter → application use case → domain model
 - `packages/*`와 `domains/*`는 TypeScript source-first package입니다.
 - 서버 전용 package를 Admin, Landing, Mobile에서 import하면 architecture check가 실패합니다.
 
+### API가 domain과 adapter를 조립하는 방식
+
+`apps/api`는 composition root입니다. HTTP 요청을 domain use case에 연결하고, 실행 환경에서 사용할 outbound adapter를 선택해 주입합니다. API는 Drizzle API나 schema를 직접 사용하지 않고 `@monoplate/postgres-adapters`가 공개하는 구현만 조립합니다.
+
+```text
+HTTP request
+    ↓
+apps/api (Hono route와 composition root)
+    ↓
+application use case
+    ↓
+domains/auth의 AuthRepository port
+    ↑ implements
+packages/postgres-adapters의 DrizzleAuthRepository
+    ↓
+packages/database → PostgreSQL
+```
+
+예를 들어 API 시작점은 database connection과 adapter를 생성한 뒤 domain port를 요구하는 `AuthService`에 주입합니다.
+
+```ts
+import { createDatabaseConnection } from "@monoplate/database";
+import { DrizzleAuthRepository } from "@monoplate/postgres-adapters/auth";
+
+const connection = createDatabaseConnection(databaseUrl);
+const repository = new DrizzleAuthRepository(connection.db);
+const auth = new AuthService(repository, tokenService, refreshTtlDays);
+```
+
+`AuthService`와 domain use case가 의존하는 것은 `AuthRepository` port입니다. 따라서 테스트에서는 같은 port를 구현한 fake 또는 memory repository를 주입할 수 있습니다. Domain은 어떤 구현이 선택됐는지 알지 못합니다.
+
+의존 방향은 항상 바깥에서 안쪽으로 향합니다.
+
+```text
+apps/api → postgres-adapters → database/Drizzle
+    │              │
+    └──────────────┴────→ domains/*의 port
+
+domains/* ─X→ apps/api, postgres-adapters, database, Drizzle
+```
+
+- `domains/*`에는 runtime `dependencies`, `peerDependencies`, `optionalDependencies`를 선언하지 않습니다.
+- domain production source는 상대 경로 또는 package에 등록된 `#<domain>/*` 내부 namespace로 연결된 순수 TypeScript 코드만 import할 수 있습니다.
+- Hono, Drizzle, PostgreSQL SDK, logger 구현 등 외부 기술은 HTTP 또는 outbound adapter에 둡니다.
+- 구체 구현 선택은 `apps/api`에서만 수행합니다. Adapter에서 domain으로 역참조하거나 domain에서 adapter를 import하지 않습니다.
+- package 내부의 상위 디렉터리 참조에는 `../`를 사용하지 않고 `#api/*`, `#database/*`, `#<domain>/*` 같은 등록된 내부 namespace를 사용합니다. 같은 디렉터리의 `./` import는 허용합니다.
+- 이 규칙은 `pnpm check:architecture`가 검사합니다.
+
 ## 도메인 생성
 
 도메인 이름은 lowercase kebab-case여야 합니다. 변경 사항이 없는 별도 브랜치에서 생성하는 것을 권장합니다.
@@ -143,7 +192,7 @@ pnpm generate:domain -- \
 - list use case와 단위 테스트
 - `packages/contracts/src/catalog/model.ts`
 - `packages/database/src/schema/catalog.ts`
-- API용 memory repository와 Drizzle repository
+- API용 memory repository와 별도 package의 Drizzle repository
 - API module composition과 workspace dependency
 - public export, database schema index, lockfile 갱신
 
@@ -169,7 +218,7 @@ pnpm domains -- --json
 ```text
 domains/catalog/src/application/ports/catalog-repository.ts
 apps/api/src/modules/catalog/infrastructure/in-memory-catalog-repository.ts
-apps/api/src/modules/catalog/infrastructure/drizzle-catalog-repository.ts
+packages/postgres-adapters/src/catalog.ts
 packages/database/src/schema/catalog.ts
 ```
 
@@ -232,7 +281,8 @@ pnpm check
 | `pnpm mobile:start` | Expo dev client 시작 |
 | `pnpm mobile:ios` | iOS native 실행 |
 | `pnpm mobile:android` | Android native 실행 |
-| `pnpm check` | env, architecture, migration, contract, lint, typecheck, test, build 전체 gate |
+| `pnpm check` | env, architecture, dependency, migration, contract, lint, typecheck, test, build, Expo doctor 전체 gate |
+| `pnpm deps:check` | package manifest의 미사용·누락 dependency 검사 |
 | `pnpm security:check` | secret scan과 High/Critical dependency audit |
 | `pnpm mobile:doctor` | Expo 설정과 dependency 검증 |
 
