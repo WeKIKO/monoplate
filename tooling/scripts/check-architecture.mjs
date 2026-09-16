@@ -45,6 +45,10 @@ for (const [name, details] of packages) {
     const source = await readFile(file, "utf8");
     for (const specifier of importsOf(source)) {
       if (specifier.startsWith("../")) errors.push(`${relativeFile}: parent-relative import ${specifier} is not allowed; use the package's # namespace`);
+      const allowedImporters = config.restrictedImports?.[specifier];
+      if (allowedImporters && !allowedImporters.includes(normalized)) {
+        errors.push(`${relativeFile}: ${specifier} is infrastructure-specific and may only be imported by ${allowedImporters.join(", ")}`);
+      }
       if ((normalized.includes("/domains/") || normalized.startsWith("domains/")) && normalized.includes("/src/") && !normalized.endsWith(".test.ts") && !normalized.endsWith(".test.tsx") && !specifier.startsWith(".") && !specifier.startsWith("#")) {
         errors.push(`${relativeFile}: domain production source may not import external package ${specifier}`);
       }

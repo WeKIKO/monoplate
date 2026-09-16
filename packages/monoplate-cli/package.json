@@ -1,0 +1,45 @@
+{
+  "name": "@xierra/monoplate-cli",
+  "version": "0.1.0",
+  "description": "Create a production-ready Monoplate application.",
+  "type": "module",
+  "bin": {
+    "monoplate": "./bin/monoplate-cli.mjs",
+    "monoplate-cli": "./bin/monoplate-cli.mjs"
+  },
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint bin test"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WeKIKO/monoplate.git",
+    "directory": "packages/monoplate-cli"
+  },
+  "homepage": "https://github.com/WeKIKO/monoplate#readme",
+  "bugs": "https://github.com/WeKIKO/monoplate/issues",
+  "keywords": [
+    "monorepo",
+    "scaffolding",
+    "expo",
+    "hono",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Xierra Jeon",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "vitest": "^4.1.11"
+  }
+}

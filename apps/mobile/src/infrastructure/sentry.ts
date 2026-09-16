@@ -13,3 +13,12 @@ export function initializeSentry() {
 export function captureException(error: unknown) {
   if (env.EXPO_PUBLIC_SENTRY_DSN) Sentry.captureException(error);
 }
+
+export function captureOtaFailure(error: unknown, operation: "check" | "download" | "reload") {
+  if (!env.EXPO_PUBLIC_SENTRY_DSN) return;
+  Sentry.withScope((scope) => {
+    scope.setTag("feature", "ota-update");
+    scope.setTag("ota.operation", operation);
+    Sentry.captureException(error instanceof Error ? error : new Error("Unknown OTA update failure"));
+  });
+}

@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@cyclonedx/cdxgen": "12.8.4",
+    "@material/material-color-utilities": "0.3.0",
     "@eslint/js": "^9.0.0",
     "@types/node": "^24.0.0",
     "dotenv": "^17.4.2",

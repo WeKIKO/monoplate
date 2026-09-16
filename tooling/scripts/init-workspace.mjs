@@ -3,6 +3,7 @@ import { mkdir, readdir, readFile, rename, rm, writeFile } from "node:fs/promise
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
+import { buildDesignTokens, normalizeHexColor, renderDesignTokenOutputs } from "./lib/design-tokens.mjs";
 
 const skippedDirectories = new Set([".git", ".turbo", ".astro", ".expo", "node_modules", "dist", "coverage", "android", "ios"]);
 const textExtensions = new Set([".cjs", ".css", ".json", ".md", ".mjs", ".sh", ".ts", ".tsx", ".yaml", ".yml"]);
@@ -72,9 +73,18 @@ export async function initialize({ root, args, output = stdout }) {
   const identifierBase = `${namespace.replace(/-/g, "")}.${project.replace(/-/g, "")}`;
   const iosBundleIdentifier = (args.iosBundleIdentifier || `com.${identifierBase}`).trim();
   const androidPackage = (args.androidPackage || `com.${identifierBase}`).trim();
+  const tokenSourcePath = join(root, "packages/design-tokens/tokens.json");
+  const tokenSource = await readFile(tokenSourcePath, "utf8").then(JSON.parse).catch(() => undefined);
+  const primaryColor = normalizeHexColor(args.primaryColor || tokenSource?.primary || "#4F46E5");
+  const selectedColors = {
+    primary: primaryColor,
+    ...(args.secondaryColor ? { secondary: normalizeHexColor(args.secondaryColor) } : tokenSource?.secondary ? { secondary: tokenSource.secondary } : {}),
+    ...(args.tertiaryColor ? { tertiary: normalizeHexColor(args.tertiaryColor) } : tokenSource?.tertiary ? { tertiary: tokenSource.tertiary } : {}),
+    ...(args.errorColor ? { error: normalizeHexColor(args.errorColor) } : tokenSource?.error ? { error: tokenSource.error } : {}),
+  };
   const features = Object.fromEntries(featureNames.map((name) => [name, parseFeature(args[`with-${name}`], name)]));
   if (features.auth && !features.database) throw new Error("--with-auth=true requires --with-database=true.");
-  const projectMetadata = { schemaVersion: 1, templateVersion: "0.1.0", project, namespace: `@${namespace}`, displayName, iosBundleIdentifier, androidPackage, features };
+  const projectMetadata = { schemaVersion: 1, templateVersion: "0.1.0", project, namespace: `@${namespace}`, displayName, iosBundleIdentifier, androidPackage, theme: { ...selectedColors }, features };
   const metadataPath = join(root, ".monoplate/project.json");
   const existing = await readFile(metadataPath, "utf8").then(JSON.parse).catch(() => undefined);
   if (existing) {
@@ -92,9 +102,18 @@ export async function initialize({ root, args, output = stdout }) {
     ["POSTGRES_DB: monoplate", `POSTGRES_DB: ${databaseName}`], ["?? \"Monoplate\"", `?? \"${displayName}\"`], ["?? \"monoplate\"", `?? \"${project}\"`]
   ];
   const changes = [];
+  const generatedTokenFiles = new Map();
+  if (tokenSource) {
+    const nextTokenSource = { ...tokenSource, ...selectedColors };
+    const rendered = renderDesignTokenOutputs(buildDesignTokens(nextTokenSource));
+    generatedTokenFiles.set(tokenSourcePath, `${JSON.stringify(nextTokenSource, null, 2)}\n`);
+    generatedTokenFiles.set(join(root, "packages/design-tokens/src/index.ts"), rendered.typescript);
+    generatedTokenFiles.set(join(root, "packages/design-tokens/generated/tailwind.cjs"), rendered.tailwind);
+    generatedTokenFiles.set(join(root, "packages/design-tokens/generated/theme.css"), rendered.css);
+  }
   for (const path of await collectFiles(root)) {
     const original = await readFile(path, "utf8");
-    let next = replacements.reduce((content, [from, to]) => content.split(from).join(to), original);
+    let next = generatedTokenFiles.get(path) ?? replacements.reduce((content, [from, to]) => content.split(from).join(to), original);
     if (path === join(root, "apps/mobile/app.config.ts")) next = next
       .replace(/ios: \{ bundleIdentifier: process\.env\.IOS_BUNDLE_IDENTIFIER \?\? "[^"]+" \}/, `ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "${iosBundleIdentifier}" }`)
       .replace(/android: \{ package: process\.env\.ANDROID_PACKAGE \?\? "[^"]+" \}/, `android: { package: process.env.ANDROID_PACKAGE ?? "${androidPackage}" }`);
@@ -118,6 +137,10 @@ async function main() {
     if (!args.name && prompt) args.name = await prompt.question(`Project name (${slugify(basename(root)) || "my-app"}): `);
     if (!args.namespace && prompt) args.namespace = await prompt.question(`Package namespace (${args.name || basename(root)}): `);
     if (!args.displayName && prompt) args.displayName = await prompt.question(`App display name (${args.name || basename(root)}): `);
+    if (!args.primaryColor && prompt) args.primaryColor = await prompt.question("Primary color (#4F46E5): ");
+    if (!args.secondaryColor && prompt) args.secondaryColor = await prompt.question("Secondary color (optional): ");
+    if (!args.tertiaryColor && prompt) args.tertiaryColor = await prompt.question("Tertiary color (optional): ");
+    if (!args.errorColor && prompt) args.errorColor = await prompt.question("Error color (optional): ");
     await initialize({ root, args });
   } finally { prompt?.close(); }
 }

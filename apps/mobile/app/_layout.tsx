@@ -1,5 +1,4 @@
 import "#mobile/styles/global.css";
-import "#mobile/app/i18n";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { AppSetup } from "#mobile/app/AppSetup";

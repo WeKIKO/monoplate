@@ -1,2 +1,3 @@
 .github/CODEOWNERS
 notes
+packages/monoplate-cli

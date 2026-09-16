@@ -3,5 +3,9 @@
   "domainRoot": "domains",
   "clientRoots": ["apps/mobile", "apps/admin", "apps/landing"],
   "serverOnlyPackages": ["database", "postgres-adapters"],
-  "domainForbiddenPackages": ["hono", "drizzle-orm", "pino", "zod", "react", "react-native", "expo"]
+  "domainForbiddenPackages": ["hono", "drizzle-orm", "pino", "zod", "react", "react-native", "expo"],
+  "restrictedImports": {
+    "@react-native-async-storage/async-storage": ["apps/mobile/src/infrastructure/storage.ts"],
+    "expo-secure-store": ["apps/mobile/src/infrastructure/storage.ts"]
+  }
 }

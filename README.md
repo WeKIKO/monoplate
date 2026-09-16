@@ -17,23 +17,21 @@
 
 ## CLI로 템플릿 사용하기
 
-> 현재 `monoplate-cli` 패키지는 이 저장소에 포함되어 있거나 npm에 배포된 상태가 아닙니다. 아직 `npx monoplate ...` 같은 명령을 사용하면 안 됩니다. 현재 지원하는 방식은 버전 태그를 checkout한 뒤 저장소 안의 initializer를 실행하는 것입니다.
+공개 template을 clone하고 initializer까지 실행하는 npm CLI를 사용할 수 있습니다.
 
 ```bash
-git clone --branch v0.1.0 git@github.com:WeKIKO/monoplate.git my-saas
-cd my-saas
-git switch -c main
-pnpm run init -- \
-  --yes \
-  --name my-saas \
-  --namespace my-company \
-  --displayName "My SaaS" \
-  --iosBundleIdentifier com.mycompany.mysaas \
-  --androidPackage com.mycompany.mysaas
-pnpm install --lockfile-only
+npx @xierra/monoplate-cli@latest new my-saas
+npx @xierra/monoplate-cli@latest new my-saas \
+  --namespace=my-company \
+  --display-name="My SaaS" \
+  --primary-color="#FF6B35" \
+  --secondary-color="#2563EB" \
+  --tertiary-color="#10B981"
 ```
 
-향후 별도 `monoplate-cli`는 다음 파일을 계약으로 사용해야 합니다.
+CLI는 공개 `WeKIKO/monoplate` template을 clone하고, 새 Git 저장소를 만든 뒤, 설치된 template의 initializer를 실행합니다. CLI 소스와 publish workflow는 `.template-ignore`로 생성 프로젝트에서 제외됩니다.
+
+initializer가 직접 사용하는 계약은 다음 파일입니다.
 
 - [템플릿 메타데이터](./.monoplate/template.json): 템플릿·CLI 최소 버전과 runtime 요구사항
 - [initializer](./tooling/scripts/init-workspace.mjs): namespace, 앱 이름, bundle ID 등의 실제 치환
@@ -50,6 +48,10 @@ pnpm install --lockfile-only
 | `--displayName` | `"My SaaS"` | 사용자에게 표시할 이름 |
 | `--iosBundleIdentifier` | `com.example.app` | iOS bundle identifier |
 | `--androidPackage` | `com.example.app` | Android application ID |
+| `--primaryColor` | `#4F46E5` | Material 3 primary seed |
+| `--secondaryColor` | 선택 | secondary seed. 없으면 primary에서 파생 |
+| `--tertiaryColor` | 선택 | tertiary seed. 없으면 primary에서 파생 |
+| `--errorColor` | 선택 | error seed. 없으면 primary에서 파생 |
 | `--yes` | — | 질문 없이 실행 |
 | `--with-admin` | `false` | Admin 선택 상태 기록 |
 | `--with-sentry` | `false` | Sentry 선택 상태 기록 |
@@ -172,6 +174,23 @@ domains/* ─X→ apps/api, postgres-adapters, database, Drizzle
 - 구체 구현 선택은 `apps/api`에서만 수행합니다. Adapter에서 domain으로 역참조하거나 domain에서 adapter를 import하지 않습니다.
 - package 내부의 상위 디렉터리 참조에는 `../`를 사용하지 않고 `#api/*`, `#database/*`, `#<domain>/*` 같은 등록된 내부 namespace를 사용합니다. 같은 디렉터리의 `./` import는 허용합니다.
 - 이 규칙은 `pnpm check:architecture`가 검사합니다.
+
+### Mobile app bootstrap과 storage 경계
+
+`apps/mobile/src/app/AppSetup.tsx`가 앱 시작에 필요한 초기화를 한곳에서 조율합니다. Font와 persisted query 복원 완료를 기다린 뒤 i18n, 인증 세션, 사용자 설정을 함께 복원하고, 모두 성공한 경우에만 splash를 닫고 앱 화면을 엽니다. OTA 확인은 첫 화면을 늦추지 않도록 bootstrap 성공 후 background에서 실행합니다.
+
+초기화 실패 또는 timeout 시 아직 신뢰할 수 있는 화면이 없으므로 기존 화면 위의 반투명 overlay가 아니라 전체 화면 오류 UI로 전환합니다. 사용자가 `다시 시도`를 누르면 앱 프로세스를 재시작하지 않고 bootstrap 묶음만 새로 실행합니다. 이후 실행 중 발생하는 전역 render 오류는 `GlobalErrorBoundary`가 담당합니다.
+
+Mobile application 코드는 AsyncStorage나 SecureStore를 직접 알지 않습니다. 저장소 종류의 선택과 key namespace는 `apps/mobile/src/infrastructure/storage.ts`에만 있으며, 나머지 코드는 다음 app-owned adapter를 사용합니다.
+
+- `preferencesStorage`: 사용자 설정
+- `credentialsStorage`: 인증 자격 증명
+- `diagnosticsStorage`: OTA 실패 등 진단 정보
+- `queryCacheStorage`: TanStack Query persister 호환 adapter
+
+새 초기화 항목도 SDK를 `AppSetup`에서 직접 호출하지 않고, infrastructure adapter 또는 app service가 공개한 초기화 함수만 등록합니다. AsyncStorage와 SecureStore의 직접 import가 adapter 밖에 생기면 `pnpm check:architecture`가 실패합니다.
+
+OTA update는 bootstrap을 막지 않고 background에서 확인합니다. 새 bundle 다운로드가 끝나면 현재 화면 위에 재시작 안내를 표시하고, 사용자가 선택하면 `Updates.reloadAsync()`를 infrastructure adapter를 통해 실행합니다. 확인·다운로드·재시작 실패는 로컬 `diagnosticsStorage`에 마지막 실패 시각/단계/메시지를 저장하고 Sentry에 `feature=ota-update`, `ota.operation` tag가 포함된 오류 event로 전송합니다. 개발 build에서는 Metro console의 `OTA update failed` 경고로도 확인할 수 있습니다.
 
 ## 도메인 생성
 

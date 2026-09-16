@@ -11,7 +11,7 @@ Monoplate is a package-enforced hexagonal modular monolith. It starts as one API
 - Pino implements the dependency-free `Logger` port at the API boundary.
 - Internal packages export TypeScript source and do not produce their own `dist` folders.
 - Each application compiles its workspace dependencies into its final artifact.
-- Mobile preferences and query cache use AsyncStorage; credentials use Expo SecureStore. MMKV is an optional adapter, not a default dependency.
+- Mobile storage is accessed through app-owned adapters. The infrastructure implementation uses AsyncStorage for preferences/query cache and Expo SecureStore for credentials; application code imports neither SDK directly. MMKV is an optional adapter replacement, not a default dependency.
 - Mobile uses Expo, Expo Router, NativeWind, persisted TanStack Query, i18n, splash orchestration, and root-level commands.
 - Admin uses React and Vite. Landing uses static Astro with SEO metadata and sitemap generation.
 - Authentication is single-tenant: users have an `admin` or `member` role, password hashing and JWT implementation remain outbound adapters, and refresh sessions are revocable database records.
