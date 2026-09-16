@@ -4,8 +4,8 @@
   "description": "Create a production-ready Monoplate application.",
   "type": "module",
   "bin": {
-    "monoplate": "./bin/monoplate-cli.mjs",
-    "monoplate-cli": "./bin/monoplate-cli.mjs"
+    "monoplate": "bin/monoplate-cli.mjs",
+    "monoplate-cli": "bin/monoplate-cli.mjs"
   },
   "files": [
     "bin",
