@@ -18,7 +18,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.0",
+    "@hono/node-server": "^2.1.1",
     "@hono/zod-openapi": "^1.6.3",
     "@monoplate/contracts": "workspace:*",
     "@monoplate/auth": "workspace:*",
@@ -34,7 +34,7 @@
     "@opentelemetry/auto-instrumentations-node": "0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.222.0",
     "@opentelemetry/sdk-node": "0.222.0",
-    "pino": "^9.0.0",
+    "pino": "^10.3.1",
     "zod": "catalog:"
   },
   "devDependencies": {
