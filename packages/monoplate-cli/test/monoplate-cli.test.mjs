@@ -1,10 +1,19 @@
+import { spawnSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { execPath } from "node:process";
+import { fileURLToPath, URL } from "node:url";
 import { describe, expect, it } from "vitest";
 import { applyTemplateIgnore, buildInitializerArgs, parseArgs } from "../bin/monoplate-cli.mjs";
 
 describe("monoplate CLI", () => {
+  it("runs through the published bin entrypoint", () => {
+    const result = spawnSync(execPath, [fileURLToPath(new URL("../bin/run.mjs", import.meta.url)), "--help"], { encoding: "utf8" });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("@xierra/monoplate-cli");
+  });
+
   it("parses inline and separated options", () => {
     expect(parseArgs(["new", "happy", "--namespace=acme", "--primary-color", "#FF6B35", "--yes"])).toEqual({
       positional: ["new", "happy"],
