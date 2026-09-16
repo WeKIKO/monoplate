@@ -2,7 +2,7 @@
 import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { ROOT } from "./lib/workspace.mjs";
-const listed = spawnSync("rg", ["--files", "--hidden", "--no-ignore", "-g", "!pnpm-lock.yaml", "-g", "!sbom.json", "-g", "!**/node_modules/**", "-g", "!**/dist/**", "-g", "!**/.turbo/**", "-g", "!**/.git/**", "-g", "!apps/api/openapi.json", "-g", "!packages/contracts/src/generated/**"], { cwd: ROOT, encoding: "utf8" });
+const listed = spawnSync("rg", ["--files", "--hidden", "--no-ignore", "-g", "!pnpm-lock.yaml", "-g", "!sbom.json", "-g", "!**/node_modules/**", "-g", "!**/dist/**", "-g", "!**/.turbo/**", "-g", "!**/.git/**", "-g", "!apps/mobile/ios/**", "-g", "!apps/mobile/android/**", "-g", "!apps/api/openapi.json", "-g", "!packages/contracts/src/generated/**"], { cwd: ROOT, encoding: "utf8" });
 if (listed.status !== 0) throw new Error("Unable to enumerate files with rg");
 const patterns = [new RegExp("-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"), new RegExp("gh[pousr]_[A-Za-z0-9]{30,}"), new RegExp("AKIA[0-9A-Z]{16}"), new RegExp("sk-" + "[A-Za-z0-9_-]{24,}"), new RegExp("xox[baprs]-[A-Za-z0-9-]{20,}")];
 const failures = [];

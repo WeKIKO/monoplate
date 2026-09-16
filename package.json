@@ -42,7 +42,6 @@
     "api:start": "pnpm --filter @monoplate/api start",
     "admin:dev": "pnpm --filter @monoplate/admin dev",
     "landing:dev": "pnpm --filter @monoplate/landing dev",
-    "prebuild": "pnpm mobile:prebuild",
     "ios": "pnpm mobile:ios",
     "android": "pnpm mobile:android",
     "mobile:start": "pnpm --filter @monoplate/mobile start",
