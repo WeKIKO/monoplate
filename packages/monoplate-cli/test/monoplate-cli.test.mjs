@@ -22,8 +22,8 @@ describe("monoplate CLI", () => {
   });
 
   it("maps CLI options to the template initializer contract", () => {
-    expect(buildInitializerArgs("happy", { namespace: "acme", "display-name": "Happy App", "primary-color": "#FF6B35", "secondary-color": "#2563EB", yes: "true" })).toEqual([
-      "run", "init", "--", "--name=happy", "--namespace=acme", "--displayName=Happy App", "--primaryColor=#FF6B35", "--secondaryColor=#2563EB", "--yes",
+    expect(buildInitializerArgs("happy", { namespace: "acme", "display-name": "Happy App", "primary-color": "#FF6B35", "secondary-color": "#2563EB", "ios-bundle-name": "com.acme.happy", "android-package-name": "com.acme.happy", yes: "true" })).toEqual([
+      "run", "init", "--", "--name=happy", "--namespace=acme", "--displayName=Happy App", "--primaryColor=#FF6B35", "--secondaryColor=#2563EB", "--iosBundleIdentifier=com.acme.happy", "--androidPackage=com.acme.happy", "--yes",
     ]);
   });
 

@@ -2,18 +2,37 @@
 
 싱글 테넌트 SaaS를 빠르게 시작하기 위한 TypeScript 모노레포 템플릿입니다. 하나의 API 배포 단위를 유지하면서 도메인별 의존성을 분리하는 hexagonal modular monolith 구조를 사용합니다.
 
-## 기술 구성
+## Monoplate 스펙
 
-| 영역 | 기술 |
-|---|---|
-| API | Node.js 24, Hono, OpenAPI, Pino |
-| 데이터베이스 | PostgreSQL 17, Drizzle ORM |
-| 인증 | 단일 테넌트 `admin`/`member`, JWT, 회전형 refresh session |
-| Mobile | Expo, Expo Router, NativeWind, TanStack Query |
-| Admin | React, Vite, TanStack Query |
-| Landing | Astro |
-| 모노레포 | pnpm workspace, Turborepo |
-| 품질·운영 | Vitest, ESLint, CodeQL, Trivy, OpenTelemetry, 선택적 Sentry |
+아래 버전은 현재 template의 `package.json`, workspace catalog와 Docker Compose 기준입니다. `^` 또는 `~` 범위로 선언된 라이브러리는 lockfile 갱신 시 호환 범위 안에서 patch/minor 버전이 바뀔 수 있습니다.
+
+| 영역 | 런타임·프레임워크 | 현재 버전 | 역할 |
+|---|---|---|---|
+| Server/API | Node.js, Hono | Node.js `>=24`, Hono `^4.10.0`, `@hono/node-server ^1.19.0` | 단일 API 배포 단위, HTTP adapter와 composition root |
+| API contract | Zod, `@hono/zod-openapi`, OpenAPI TypeScript | Zod `^4.0.0`, Zod OpenAPI `^1.6.3`, OpenAPI TypeScript `7.10.1` | 요청 검증, OpenAPI 문서와 타입 안전 client 생성 |
+| Database | PostgreSQL, Drizzle ORM, postgres.js | PostgreSQL `17-alpine`, Drizzle ORM `^0.45.2`, postgres.js `^3.4.0`, Drizzle Kit `^0.31.0` | schema, migration, connection과 outbound persistence adapter |
+| Authentication | JOSE/JWT | `jose ^6.1.0` | `admin`/`member`, access JWT와 회전형 refresh session |
+| Mobile | Expo, React Native, Expo Router | Expo `57.0.23`, React Native `0.86.3`, React `19.2.3`, Expo Router `57.0.21` | iOS/Android 앱, file-based routing과 OTA update |
+| Admin | React SPA, Vite, React Router | React `19.2.3`, Vite `^7.0.0`, React Router `7.18.3` | 운영자용 web application |
+| Landing | Astro | Astro `^7.3.2`, Sitemap `^3.7.4` | 정적 마케팅·서비스 소개 사이트 |
+| Monorepo | pnpm workspace, Turborepo, TypeScript | pnpm `11.24.0`, Turbo `^2.0.0`, TypeScript `^5.9.0` | source-first workspace package와 task orchestration |
+| Test/quality | Vitest, ESLint, Knip | Vitest `^4.1.11`, ESLint `^9.0.0`, Knip `^5.64.1` | test, lint, dependency 및 architecture 검증 |
+
+### 주요 서드파티
+
+| 범위 | 라이브러리 | 용도 |
+|---|---|---|
+| API | Pino `^9.0.0` | 구조화 logging |
+| API | OpenTelemetry API `1.9.1`, SDK/OTLP `0.222.0` | trace와 observability export |
+| Web/Mobile | TanStack Query `5.102.8`(Admin), `5.101.4`(Mobile) | server state, cache와 offline persistence |
+| Mobile | NativeWind `4.2.6`, Tailwind CSS `^3.4.19` | utility 기반 React Native styling |
+| Mobile | AsyncStorage `2.2.0`, Expo SecureStore `~57.0.4` | app-owned adapter 뒤의 설정·cache·credential 저장소 |
+| Mobile | Expo Updates `~57.0.14`, Sentry React Native `~7.11.0` | OTA update와 선택적 error monitoring |
+| Mobile | i18next `^25.0.0`, React i18next `^16.0.0` | 다국어 처리 |
+| Design | Material Color Utilities `0.3.0` | Material 3 light/dark 및 monochrome token 생성 |
+| Config | dotenv `^17.0.0`, Zod `^4.0.0` | workspace 환경변수 로딩과 runtime validation |
+
+서드파티 SDK는 domain에서 직접 사용하지 않습니다. Hono는 API HTTP adapter, Drizzle은 database/postgres adapter, AsyncStorage·SecureStore·Sentry·Expo Updates는 Mobile infrastructure adapter 안에 격리됩니다.
 
 ## CLI로 템플릿 사용하기
 
@@ -24,12 +43,16 @@ npx @xierra/monoplate-cli@latest new my-saas
 npx @xierra/monoplate-cli@latest new my-saas \
   --namespace=my-company \
   --display-name="My SaaS" \
+  --ios-bundle-identifier="com.mycompany.mysaas" \
+  --android-package="com.mycompany.mysaas" \
   --primary-color="#FF6B35" \
   --secondary-color="#2563EB" \
   --tertiary-color="#10B981"
 ```
 
 CLI는 공개 `WeKIKO/monoplate` template을 clone하고, 새 Git 저장소를 만든 뒤, 설치된 template의 initializer를 실행합니다. CLI 소스와 publish workflow는 `.template-ignore`로 생성 프로젝트에서 제외됩니다.
+
+대화형 실행은 project name, namespace, display name, iOS bundle identifier, Android package name과 테마 색상을 순서대로 질문합니다. iOS/Android identifier에서 Enter를 누르면 `com.<namespace>.<project>` 형식의 기본값을 사용합니다. 기존 `--ios-bundle-identifier`, `--android-package` 외에 `--ios-bundle-name`, `--android-package-name` alias도 지원합니다.
 
 initializer가 직접 사용하는 계약은 다음 파일입니다.
 

@@ -13,7 +13,7 @@ npx @xierra/monoplate-cli@latest new happy
 대화형으로 프로젝트 identity, namespace, bundle identifier와 테마 색상을 설정합니다. The interactive flow configures identity, namespace, bundle identifiers, and theme colors.
 
 ```bash
-npx @xierra/monoplate-cli@latest new happy --namespace=happy --display-name="Happy" --primary-color="#FF6B35" --secondary-color="#2563EB" --tertiary-color="#10B981" --error-color="#DC2626"
+npx @xierra/monoplate-cli@latest new happy --namespace=happy --display-name="Happy" --ios-bundle-identifier="com.happy.app" --android-package="com.happy.app" --primary-color="#FF6B35" --secondary-color="#2563EB" --tertiary-color="#10B981" --error-color="#DC2626"
 ```
 
 도움말은 다음 명령으로 확인할 수 있습니다. Show all options with:
@@ -29,7 +29,8 @@ npx @xierra/monoplate-cli@latest --help
 3. `.template-ignore`의 CLI 전용 파일을 제거합니다. Remove template-only paths.
 4. `pnpm install --frozen-lockfile`으로 의존성을 설치합니다. Install dependencies.
 5. clone된 template의 initializer로 identity와 theme을 적용합니다. Run the template initializer.
-6. 실패하면 기본적으로 생성 디렉터리를 삭제합니다. `--keep-on-failure`로 유지할 수 있습니다.
+6. 변경된 workspace namespace에 맞춰 dependency link를 갱신합니다. Refresh workspace dependency links for the generated namespace.
+7. 실패하면 기본적으로 생성 디렉터리를 삭제합니다. `--keep-on-failure`로 유지할 수 있습니다.
 
 npm package에는 CLI만 포함되고, Monoplate 전체 소스는 실행 시 공개 GitHub에서 받습니다. The npm package contains only the CLI; the full template is fetched at runtime.
 
@@ -64,6 +65,8 @@ light/dark scheme 모두에 `on*`, `*Container`, surface, outline, inverse seman
 | `--error-color=<#RRGGBB>` | optional error seed |
 | `--ios-bundle-identifier=<id>` | iOS bundle identifier |
 | `--android-package=<id>` | Android application ID |
+| `--ios-bundle-name=<id>` | `--ios-bundle-identifier` alias |
+| `--android-package-name=<id>` | `--android-package` alias |
 | `--template=<git-url>` | template URL |
 | `--tag=<tag-or-branch>` | Git tag or branch |
 | `--skip-install` | install 생략; `--skip-init` 필요 / requires `--skip-init` |

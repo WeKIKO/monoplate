@@ -23,6 +23,8 @@ Identity and theme:
   --error-color=<#RRGGBB>            optional error seed
   --ios-bundle-identifier=<id>        iOS bundle identifier
   --android-package=<id>              Android application id
+  --ios-bundle-name=<id>              alias of --ios-bundle-identifier
+  --android-package-name=<id>          alias of --android-package
 
 Template:
   --template=<git-url>                template repository (default: ${DEFAULT_TEMPLATE})
@@ -103,9 +105,14 @@ const initializerFlags = new Map([
 ]);
 
 export function buildInitializerArgs(name, flags) {
+  const normalizedFlags = {
+    ...flags,
+    "ios-bundle-identifier": flags["ios-bundle-identifier"] ?? flags["ios-bundle-name"],
+    "android-package": flags["android-package"] ?? flags["android-package-name"],
+  };
   const args = ["run", "init", "--", `--name=${name}`];
   for (const [cliName, initializerName] of initializerFlags) {
-    if (flags[cliName] !== undefined) args.push(`--${initializerName}=${flags[cliName]}`);
+    if (normalizedFlags[cliName] !== undefined) args.push(`--${initializerName}=${normalizedFlags[cliName]}`);
   }
   if (flags.yes === "true") args.push("--yes");
   return args;
@@ -136,6 +143,8 @@ export function createProject({ name, flags, cwd = process.cwd(), log = console.
     if (flags["skip-init"] !== "true") {
       log("Configuring project identity and theme...");
       run("pnpm", buildInitializerArgs(name, flags), { cwd: target, env: { ...process.env, ...(flags.yes === "true" ? { MONOPLATE_NON_INTERACTIVE: "1" } : {}) } });
+      log("Refreshing workspace links...");
+      run("pnpm", ["install", "--frozen-lockfile"], { cwd: target });
     }
     log(`Created ${name}. Next: cd ${name} && pnpm dev`);
     return target;

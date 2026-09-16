@@ -1,8 +1,7 @@
 import { defineConfig } from "drizzle-kit";
-import { config } from "dotenv";
-import { resolve } from "node:path";
+import { loadWorkspaceEnvironment } from "@monoplate/config/load";
 
-config({ path: resolve(import.meta.dirname, "../../.env"), quiet: true });
+loadWorkspaceEnvironment(import.meta.dirname);
 
 export default defineConfig({
   dialect: "postgresql",

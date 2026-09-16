@@ -1,9 +1,8 @@
-import { config } from "dotenv";
-import { resolve } from "node:path";
 import { parseAdminEnv } from "./admin.js";
+import { loadWorkspaceEnvironment } from "./load.js";
 import { parseMobileEnv } from "./mobile.js";
 import { parseServerEnv } from "./server.js";
-config({ path: resolve(process.cwd(), "../../.env"), quiet: true });
+loadWorkspaceEnvironment();
 parseServerEnv();
 parseAdminEnv(process.env);
 parseMobileEnv(process.env);

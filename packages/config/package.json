@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./server": "./src/server.ts", "./mobile": "./src/mobile.ts", "./admin": "./src/admin.ts", "./load": "./src/load.ts" },
+  "exports": { ".": "./src/index.ts", "./server": "./src/server.ts", "./mobile": "./src/mobile.ts", "./admin": "./src/admin.ts", "./load": "./src/load.ts", "./workspace": "./src/workspace.ts" },
   "scripts": { "check": "tsx src/check.ts", "typecheck": "tsc", "test": "vitest run", "lint": "eslint src" },
   "dependencies": { "dotenv": "^17.0.0", "zod": "catalog:" },
   "devDependencies": { "@monoplate/typescript-config": "workspace:*", "tsx": "^4.20.0", "typescript": "catalog:", "vitest": "^4.1.11" }

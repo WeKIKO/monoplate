@@ -1,9 +1,8 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
-import { config as loadEnv } from "dotenv";
-import { resolve } from "node:path";
+import { loadWorkspaceEnvironment } from "@monoplate/config/load";
 import { parseMobileEnv } from "@monoplate/config/mobile";
 
-loadEnv({ path: resolve(__dirname, "../../.env"), quiet: true });
+loadWorkspaceEnvironment(__dirname);
 parseMobileEnv({ EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL, EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV, EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN });
 
 export default ({ config }: ConfigContext): ExpoConfig => {

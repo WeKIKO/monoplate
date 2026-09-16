@@ -1,6 +1,6 @@
-import { config } from "dotenv";
-import { resolve } from "node:path";
+import { loadWorkspaceEnvironment } from "@monoplate/config/load";
+import { resolveWorkspacePath } from "@monoplate/config/workspace";
 
-export const workspaceEnvironmentPath = resolve(import.meta.dirname, "../../../../.env");
+export const workspaceEnvironmentPath = resolveWorkspacePath(".env");
 
-config({ path: workspaceEnvironmentPath, quiet: true });
+loadWorkspaceEnvironment();

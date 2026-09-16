@@ -2,7 +2,7 @@
 import { mkdir, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
-import { stdin, stdout } from "node:process";
+import process, { stdin, stdout } from "node:process";
 import { buildDesignTokens, normalizeHexColor, renderDesignTokenOutputs } from "./lib/design-tokens.mjs";
 
 const skippedDirectories = new Set([".git", ".turbo", ".astro", ".expo", "node_modules", "dist", "coverage", "android", "ios"]);
@@ -95,11 +95,11 @@ export async function initialize({ root, args, output = stdout }) {
   const envPrefix = project.replace(/-/g, "_").toUpperCase();
   const databaseName = project.replace(/-/g, "_");
   const replacements = [
-    ["@monoplate/", `@${namespace}/`], ["\"name\": \"monoplate\"", `\"name\": \"${project}\"`],
+    ["@monoplate/", `@${namespace}/`], ['"name": "monoplate"', `"name": "${project}"`],
     ["Monoplate Admin", `${displayName} Admin`], ["Welcome to Monoplate", `Welcome to ${displayName}`],
     ["Monoplate에 오신 것을 환영합니다", `${displayName}에 오신 것을 환영합니다`], ["MONOPLATE_QUERY_CACHE", `${envPrefix}_QUERY_CACHE`],
-    ["monoplate-api", `${project}-api`], ["monoplate_test", `${databaseName}_test`], ["/monoplate", `/${databaseName}`],
-    ["POSTGRES_DB: monoplate", `POSTGRES_DB: ${databaseName}`], ["?? \"Monoplate\"", `?? \"${displayName}\"`], ["?? \"monoplate\"", `?? \"${project}\"`]
+    ["monoplate-api", `${project}-api`], ["monoplate_test", `${databaseName}_test`], [":5432/monoplate", `:5432/${databaseName}`],
+    ["POSTGRES_DB: monoplate", `POSTGRES_DB: ${databaseName}`], ['?? "Monoplate"', `?? "${displayName}"`], ['?? "monoplate"', `?? "${project}"`]
   ];
   const changes = [];
   const generatedTokenFiles = new Map();
@@ -128,19 +128,30 @@ export async function initialize({ root, args, output = stdout }) {
   return { changed: changes.length, metadata: projectMetadata };
 }
 
+export async function promptForInitializerArgs({ args, root, prompt }) {
+  if (!prompt) return args;
+  if (!args.name) args.name = await prompt.question(`Project name (${slugify(basename(root)) || "my-app"}): `);
+  if (!args.namespace) args.namespace = await prompt.question(`Package namespace (${args.name || basename(root)}): `);
+  if (!args.displayName) args.displayName = await prompt.question(`App display name (${args.name || basename(root)}): `);
+    const promptedProject = slugify(args.name || basename(root) || "my-app");
+    const promptedNamespace = normalizeNamespace(args.namespace || promptedProject);
+    const defaultApplicationId = `com.${promptedNamespace.replace(/-/g, "")}.${promptedProject.replace(/-/g, "")}`;
+  if (!args.iosBundleIdentifier) args.iosBundleIdentifier = await prompt.question(`iOS bundle identifier (${defaultApplicationId}): `);
+  if (!args.androidPackage) args.androidPackage = await prompt.question(`Android package name (${defaultApplicationId}): `);
+  if (!args.primaryColor) args.primaryColor = await prompt.question("Primary color (#4F46E5): ");
+  if (!args.secondaryColor) args.secondaryColor = await prompt.question("Secondary color (optional): ");
+  if (!args.tertiaryColor) args.tertiaryColor = await prompt.question("Tertiary color (optional): ");
+  if (!args.errorColor) args.errorColor = await prompt.question("Error color (optional): ");
+  return args;
+}
+
 async function main() {
   const args = readArgs(process.argv.slice(2));
   const root = args.root ? resolve(args.root) : resolve(import.meta.dirname, "../..");
   const nonInteractive = args.yes === "true" || process.env.MONOPLATE_NON_INTERACTIVE === "1";
   const prompt = nonInteractive ? null : createInterface({ input: stdin, output: stdout });
   try {
-    if (!args.name && prompt) args.name = await prompt.question(`Project name (${slugify(basename(root)) || "my-app"}): `);
-    if (!args.namespace && prompt) args.namespace = await prompt.question(`Package namespace (${args.name || basename(root)}): `);
-    if (!args.displayName && prompt) args.displayName = await prompt.question(`App display name (${args.name || basename(root)}): `);
-    if (!args.primaryColor && prompt) args.primaryColor = await prompt.question("Primary color (#4F46E5): ");
-    if (!args.secondaryColor && prompt) args.secondaryColor = await prompt.question("Secondary color (optional): ");
-    if (!args.tertiaryColor && prompt) args.tertiaryColor = await prompt.question("Tertiary color (optional): ");
-    if (!args.errorColor && prompt) args.errorColor = await prompt.question("Error color (optional): ");
+    await promptForInitializerArgs({ args, root, prompt });
     await initialize({ root, args });
   } finally { prompt?.close(); }
 }

@@ -1,8 +1,9 @@
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import process from "node:process";
 import { afterEach, describe, expect, it } from "vitest";
-import { initialize } from "./init-workspace.mjs";
+import { initialize, promptForInitializerArgs } from "./init-workspace.mjs";
 
 const roots = [];
 afterEach(async () => { delete process.env.MONOPLATE_TEST_FAIL_AFTER; await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true }))); });
@@ -25,6 +26,16 @@ async function fixture(prefix = "monoplate test ") {
 }
 
 describe("workspace initializer", () => {
+  it("asks for iOS and Android identifiers during interactive setup", async () => {
+    const questions = [];
+    const answers = ["shop", "acme", "Acme Shop", "com.acme.shop.ios", "com.acme.shop.android", "#4F46E5", "", "", ""];
+    const args = {};
+    await promptForInitializerArgs({ args, root: "/workspace/shop", prompt: { question(message) { questions.push(message); return Promise.resolve(answers.shift()); } } });
+    expect(questions).toContain("iOS bundle identifier (com.acme.shop): ");
+    expect(questions).toContain("Android package name (com.acme.shop): ");
+    expect(args).toMatchObject({ iosBundleIdentifier: "com.acme.shop.ios", androidPackage: "com.acme.shop.android" });
+  });
+
   it.each([
     ["acme", "shop", "Acme Shop", "com.acme.shop", "com.acme.shop"],
     ["hello-world", "field-app", "현장 앱", "io.example.field", "io.example.field"]
