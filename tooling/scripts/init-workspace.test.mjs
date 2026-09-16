@@ -2,6 +2,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
+import sharp from "sharp";
 import { afterEach, describe, expect, it } from "vitest";
 import { initialize, promptForInitializerArgs } from "./init-workspace.mjs";
 
@@ -15,14 +16,16 @@ async function fixture(prefix = "monoplate test ") {
   await mkdir(join(root, "apps/api/src/observability"), { recursive: true });
   await mkdir(join(root, "apps/admin/src"), { recursive: true });
   await mkdir(join(root, "apps/landing/src/pages"), { recursive: true });
+  await mkdir(join(root, "apps/landing/public"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/generated"), { recursive: true });
   await mkdir(join(root, "packages/design-tokens/src"), { recursive: true });
   await writeFile(join(root, "package.json"), '{"name": "monoplate", "dependencies":{"@monoplate/config":"workspace:*"}}\n');
-  await writeFile(join(root, "apps/mobile/app.config.ts"), 'export default { ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "com.monoplate.app" }, android: { package: process.env.ANDROID_PACKAGE ?? "com.monoplate.app" } };\n');
+  await writeFile(join(root, "apps/mobile/app.config.ts"), 'export default { ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "com.example.monoplate", associatedDomains: [] }, android: { package: process.env.ANDROID_PACKAGE ?? "com.example.monoplate", intentFilters: [] } };\n');
   await writeFile(join(root, "compose.yaml"), 'environment:\n  POSTGRES_DB: monoplate\nhealthcheck:\n  test: ["CMD-SHELL", "pg_isready -U postgres -d monoplate"]\n');
   await writeFile(join(root, "apps/api/src/observability/metrics.ts"), 'export const metric = "monoplate_http_requests_total";\n');
   await writeFile(join(root, "apps/admin/src/main.tsx"), 'export const key = "monoplate.admin.access-token"; export const brand = <strong>Monoplate</strong>;\n');
   await writeFile(join(root, "apps/landing/src/pages/index.astro"), '---\nimport "@monoplate/design-tokens/css";\nimport { appPath } from "@monoplate/ui/core";\n---\n');
+  await writeFile(join(root, "apps/landing/public/og.svg"), '<svg><text>Monoplate</text></svg>\n');
   await writeFile(join(root, "packages/design-tokens/tokens.json"), '{"primary":"#4F46E5","fonts":{"body":"Inter_400Regular","heading":"Inter_700Bold"},"spacing":{"md":16},"radius":{"md":10}}\n');
   await writeFile(join(root, "packages/design-tokens/generated/theme.css"), "stale\n");
   await writeFile(join(root, "packages/design-tokens/generated/tailwind.cjs"), "stale\n");
@@ -51,7 +54,12 @@ describe("workspace initializer", () => {
     expect(await readFile(join(root, "package.json"), "utf8")).toContain(`@${namespace}/config`);
     expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).toContain(`@${namespace}/ui/core`);
     expect(await readFile(join(root, "apps/landing/src/pages/index.astro"), "utf8")).not.toContain("@monoplate/");
-    expect(await readFile(join(root, "apps/mobile/app.config.ts"), "utf8")).toContain(iosBundleIdentifier);
+    const mobileConfig = await readFile(join(root, "apps/mobile/app.config.ts"), "utf8");
+    expect(mobileConfig).toContain(`bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "${iosBundleIdentifier}"`);
+    expect(mobileConfig).toContain(`package: process.env.ANDROID_PACKAGE ?? "${androidPackage}"`);
+    expect(mobileConfig).not.toContain("com.example.monoplate");
+    expect(await readFile(join(root, "apps/landing/public/og.svg"), "utf8")).toContain(`>${displayName}</text>`);
+    expect((await sharp(join(root, "apps/mobile/assets/splash-icon.png")).metadata()).format).toBe("png");
     expect(await readFile(join(root, "compose.yaml"), "utf8")).toContain(`pg_isready -U postgres -d ${name.replaceAll("-", "_")}`);
     expect(await readFile(join(root, "apps/api/src/observability/metrics.ts"), "utf8")).toContain(`${name.replaceAll("-", "_")}_http_requests_total`);
     expect(await readFile(join(root, "apps/admin/src/main.tsx"), "utf8")).toContain(`"${name}.admin.access-token"`);
@@ -85,6 +93,8 @@ describe("workspace initializer", () => {
     expect(theme).toContain("--color-primary-container:");
     expect(theme).not.toContain("--color-error: #BA1A1A;");
     expect(theme).not.toContain("#4F46E5");
+    const splashPixel = await sharp(join(root, "apps/mobile/assets/splash-icon.png")).extract({ left: 100, top: 100, width: 1, height: 1 }).raw().toBuffer();
+    expect([...splashPixel.subarray(0, 3)]).toEqual([255, 107, 53]);
   });
 
   it("uses a monochrome scheme and preserves an achromatic primary seed", async () => {

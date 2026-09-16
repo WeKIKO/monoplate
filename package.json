@@ -75,6 +75,7 @@
     "eslint": "^9.0.0",
     "knip": "^5.64.1",
     "openapi-typescript": "7.10.1",
+    "sharp": "0.35.4",
     "turbo": "^2.0.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.0.0",

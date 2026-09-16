@@ -6,7 +6,7 @@ loadWorkspaceEnvironment(__dirname);
 parseMobileEnv({ EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL, EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV, EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN });
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const plugins: NonNullable<ExpoConfig["plugins"]> = ["expo-router", "expo-localization", "expo-secure-store", ["expo-splash-screen", { backgroundColor: "#F7F8FA" }]];
+  const plugins: NonNullable<ExpoConfig["plugins"]> = ["expo-router", "expo-localization", "expo-secure-store", ["expo-splash-screen", { backgroundColor: "#F7F8FA", image: "./assets/splash-icon.png", imageWidth: 160, resizeMode: "contain" }]];
   if (process.env.EXPO_PUBLIC_SENTRY_DSN) plugins.push(["@sentry/react-native/expo", { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT }]);
   return ({
   ...config,

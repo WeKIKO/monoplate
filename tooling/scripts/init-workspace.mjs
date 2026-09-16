@@ -3,10 +3,11 @@ import { mkdir, readdir, readFile, rename, rm, writeFile } from "node:fs/promise
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import process, { stdin, stdout } from "node:process";
+import sharp from "sharp";
 import { buildDesignTokens, normalizeHexColor, renderDesignTokenOutputs } from "./lib/design-tokens.mjs";
 
 const skippedDirectories = new Set([".git", ".turbo", ".astro", ".expo", "node_modules", "dist", "coverage", "android", "ios"]);
-const textExtensions = new Set([".astro", ".cjs", ".css", ".json", ".md", ".mjs", ".sh", ".ts", ".tsx", ".yaml", ".yml"]);
+const textExtensions = new Set([".astro", ".cjs", ".css", ".json", ".md", ".mjs", ".sh", ".svg", ".ts", ".tsx", ".yaml", ".yml"]);
 const textFileNames = new Set(["Dockerfile", ".env.example"]);
 const featureNames = ["admin", "sentry", "auth", "database", "eas", "observability"];
 
@@ -28,6 +29,16 @@ const slugify = (value) => value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-
 const normalizeNamespace = (value) => slugify(value.replace(/^@/, ""));
 function validateIdentifier(value, label) { if (!value || !/^[a-z][a-z0-9-]*$/.test(value)) throw new Error(`${label} must start with a letter and contain only lowercase letters, numbers, and hyphens.`); return value; }
 function parseFeature(value, name) { if (value === undefined || value === "true") return true; if (value === "false") return false; throw new Error(`--with-${name} must be true or false.`); }
+
+async function renderSplashIcon(primary) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect x="48" y="48" width="184" height="184" rx="44" fill="${primary}"/>
+  <rect x="280" y="48" width="184" height="184" rx="44" fill="${primary}" fill-opacity="0.72"/>
+  <rect x="48" y="280" width="184" height="184" rx="44" fill="${primary}" fill-opacity="0.72"/>
+  <rect x="280" y="280" width="184" height="184" rx="44" fill="${primary}"/>
+</svg>`;
+  return sharp(Buffer.from(svg)).png().toBuffer();
+}
 
 async function collectFiles(directory) {
   const files = [];
@@ -119,10 +130,13 @@ export async function initialize({ root, args, output = stdout }) {
     const original = await readFile(path, "utf8");
     let next = generatedTokenFiles.get(path) ?? replacements.reduce((content, [from, to]) => content.split(from).join(to), original);
     if (path === join(root, "apps/mobile/app.config.ts")) next = next
-      .replace(/ios: \{ bundleIdentifier: process\.env\.IOS_BUNDLE_IDENTIFIER \?\? "[^"]+" \}/, `ios: { bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "${iosBundleIdentifier}" }`)
-      .replace(/android: \{ package: process\.env\.ANDROID_PACKAGE \?\? "[^"]+" \}/, `android: { package: process.env.ANDROID_PACKAGE ?? "${androidPackage}" }`);
+      .replace(/bundleIdentifier: process\.env\.IOS_BUNDLE_IDENTIFIER \?\? "[^"]+"/, `bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER ?? "${iosBundleIdentifier}"`)
+      .replace(/package: process\.env\.ANDROID_PACKAGE \?\? "[^"]+"/, `package: process.env.ANDROID_PACKAGE ?? "${androidPackage}"`);
     if (next !== original) changes.push({ path, original, next, existed: true });
   }
+  const splashIconPath = join(root, "apps/mobile/assets/splash-icon.png");
+  const originalSplashIcon = await readFile(splashIconPath).catch(() => undefined);
+  changes.push({ path: splashIconPath, original: originalSplashIcon ?? Buffer.alloc(0), next: await renderSplashIcon(selectedColors.primary), existed: originalSplashIcon !== undefined });
   changes.push({ path: metadataPath, original: "", next: `${JSON.stringify(projectMetadata, null, 2)}\n`, existed: false });
   const provenancePath = join(root, ".monoplate/generated.json");
   const provenance = { generator: "monoplate", templateVersion: "0.1.0", generatedAt: new Date().toISOString(), editable: ["apps/**", "domains/**", "packages/**"], regenerate: ["apps/api/openapi.json", "packages/contracts/src/generated/**", "packages/design-tokens/src/generated/**"] };
