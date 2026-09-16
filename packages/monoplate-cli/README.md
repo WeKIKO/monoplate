@@ -90,38 +90,23 @@ npx @xierra/monoplate-cli@latest new happy --tag=v0.2.0
 
 `--skip-install --skip-init`을 함께 사용하면 pnpm 없이 template만 받을 수 있습니다. Use both flags to clone without pnpm.
 
-## 로컬 개발 | Local development
+## 생성되는 프로젝트 문서 | Generated project documentation
 
-```bash
-git clone https://github.com/WeKIKO/monoplate.git
-cd monoplate
-pnpm install
-pnpm --filter @xierra/monoplate-cli test
-pnpm --filter @xierra/monoplate-cli lint
-node packages/monoplate-cli/bin/monoplate-cli.mjs --help
-```
+CLI가 생성하는 프로젝트에는 Monoplate root README와 상세 문서가 함께 포함됩니다. 서버, 데이터베이스, Mobile, Admin, Landing의 정확한 버전과 주요 서드파티는 template 문서를 기준으로 확인하세요.
 
-패키지에 포함되는 파일은 다음으로 확인합니다. Inspect npm contents with:
+Every generated project includes the Monoplate root README and detailed documentation. Use the template documentation as the source of truth for current framework versions, architecture, setup, and operations.
 
-```bash
-cd packages/monoplate-cli
-npm pack --dry-run
-```
+| 문서 / Document | 내용 / Contents |
+| --- | --- |
+| [Monoplate README](https://github.com/WeKIKO/monoplate#readme) | 전체 사용법과 문서 진입점 / Complete guide and documentation entry point |
+| [Monoplate 스펙](https://github.com/WeKIKO/monoplate#monoplate-%EC%8A%A4%ED%8E%99) | Server, PostgreSQL/Drizzle, Expo, React/Vite, Astro와 주요 라이브러리 버전 |
+| [5분 로컬 시작](https://github.com/WeKIKO/monoplate#5%EB%B6%84-%EB%A1%9C%EC%BB%AC-%EC%8B%9C%EC%9E%91) | 환경변수, database와 개발 서버 실행 / Environment, database, and dev startup |
+| [저장소 구조](https://github.com/WeKIKO/monoplate#%EC%A0%80%EC%9E%A5%EC%86%8C-%EA%B5%AC%EC%A1%B0) | 앱·도메인·adapter 의존 방향 / Apps, domains, adapters, and dependency direction |
+| [Architecture 문서](https://github.com/WeKIKO/monoplate/tree/main/docs) | ADR, 배포, 보안, 운영 runbook / ADRs, deployment, security, and operations |
 
-## 배포 | Publishing
+생성된 프로젝트 안에서는 root의 `README.md`를 바로 열면 같은 내용을 확인할 수 있습니다.
 
-```bash
-cd packages/monoplate-cli
-npm login
-npm publish --access public
-```
-
-또는 `publish-cli.yml` workflow에서 `cli-v*` tag를 push할 수 있습니다. Alternatively, configure npm trusted publishing or `NPM_TOKEN`, then push a `cli-v*` tag.
-
-```bash
-git tag cli-v0.1.0
-git push origin cli-v0.1.0
-```
+Inside a generated project, open the root `README.md` for the same documentation without leaving the repository.
 
 ## 라이선스 | License
 
