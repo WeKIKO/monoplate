@@ -42,6 +42,6 @@
     "esbuild": "^0.28.0",
     "tsx": "^4.20.0",
     "typescript": "catalog:",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   }
 }
