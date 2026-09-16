@@ -22,6 +22,6 @@
   "devDependencies": {
     "@monoplate/typescript-config": "workspace:*",
     "typescript": "catalog:",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   }
 }
