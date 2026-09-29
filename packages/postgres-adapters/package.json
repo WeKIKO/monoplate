@@ -17,7 +17,7 @@
     "@monoplate/database": "workspace:*",
     "@monoplate/health": "workspace:*",
     "@monoplate/logger": "workspace:*",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.3"
   },
   "devDependencies": {
     "@monoplate/typescript-config": "workspace:*",

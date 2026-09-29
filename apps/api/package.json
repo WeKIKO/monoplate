@@ -18,7 +18,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.0",
+    "@hono/node-server": "^2.1.1",
     "@hono/zod-openapi": "^1.6.3",
     "@monoplate/contracts": "workspace:*",
     "@monoplate/auth": "workspace:*",
@@ -28,13 +28,13 @@
     "@monoplate/health": "workspace:*",
     "@monoplate/logger": "workspace:*",
     "@monoplate/postgres-adapters": "workspace:*",
-    "hono": "^4.10.0",
+    "hono": "^4.13.9",
     "jose": "^6.1.0",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/auto-instrumentations-node": "0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.222.0",
     "@opentelemetry/sdk-node": "0.222.0",
-    "pino": "^9.0.0",
+    "pino": "^10.3.1",
     "zod": "catalog:"
   },
   "devDependencies": {
