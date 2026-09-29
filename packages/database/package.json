@@ -28,9 +28,9 @@
   },
   "devDependencies": {
     "@monoplate/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.31.0",
-    "tsx": "^4.20.0",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
     "typescript": "catalog:",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.2"
   }
 }

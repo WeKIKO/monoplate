@@ -68,17 +68,17 @@
   },
   "devDependencies": {
     "@cyclonedx/cdxgen": "12.8.4",
-    "@material/material-color-utilities": "0.3.0",
-    "@eslint/js": "^9.0.0",
-    "@types/node": "^24.0.0",
+    "@material/material-color-utilities": "0.4.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.3",
     "dotenv": "^17.4.2",
-    "eslint": "^9.0.0",
-    "knip": "^5.64.1",
-    "openapi-typescript": "7.10.1",
+    "eslint": "^10.11.0",
+    "knip": "^6.38.0",
+    "openapi-typescript": "7.13.0",
     "sharp": "0.35.4",
-    "turbo": "^2.0.0",
+    "turbo": "^2.11.4",
     "typescript": "^5.9.0",
-    "typescript-eslint": "^8.0.0",
-    "vitest": "^4.1.11"
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.2"
   }
 }
