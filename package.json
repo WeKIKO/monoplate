@@ -71,13 +71,13 @@
     "@material/material-color-utilities": "0.3.0",
     "@eslint/js": "^9.0.0",
     "@types/node": "^24.0.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.9",
     "eslint": "^9.0.0",
     "knip": "^5.64.1",
     "openapi-typescript": "7.10.1",
     "sharp": "0.35.4",
     "turbo": "^2.0.0",
-    "typescript": "^5.9.0",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.0.0",
     "vitest": "^4.1.11"
   }
